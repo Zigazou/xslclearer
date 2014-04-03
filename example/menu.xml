@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu firstday="2014-06-02" type="self">
+    <day num="0">
+        <extra></extra>
+        <starter>macédoine mayonnaise, chou fleur vinaigrette</starter>
+        <main>omelette au fromage</main>
+        <vegetable>pommes rissolées <label name="HN"/></vegetable>
+        <dairy>fromage blanc sucré</dairy>
+        <dessert>fruit.</dessert>
+        <snack>pain campagne, beurre, confiture, lait <label name="AB"/>.</snack>
+    </day>
+    <day num="1">
+        <extra></extra>
+        <starter>concombre <label name="AB"/> bulgare, carottes <label name="AB"/> râpées</starter>
+        <main>brandade de poissons <label name="BN"/></main>
+        <vegetable></vegetable>
+        <dairy>yaourt <label name="AB"/> sucré ferme des peupliers</dairy>
+        <dessert>salade de fruits.</dessert>
+        <snack>pain au lait, chocolat, jus pommes <label name="AB"/>.</snack>
+    </day>
+    <day num="2">
+        <extra></extra>
+        <starter>melon</starter>
+        <main>paupiette de veau sauce paprika</main>
+        <vegetable>haricots beurre persillés</vegetable>
+        <dairy>boursin, chanteneige</dairy>
+        <dessert>crêpe au sucre.</dessert>
+        <snack>céréales, fromage blanc.</snack>
+    </day>
+    <day num="3">
+        <extra></extra>
+        <starter>salade iceberg croutons, chou blanc comtoise</starter>
+        <main>rôti de bœuf <label name="AB"/></main>
+        <vegetable>petits pois</vegetable>
+        <dairy>emmental, comté</dairy>
+        <dessert>riz au lait <label name="HN"/>.</dessert>
+        <snack>yaourt sucré, gâteau au yaourt, jus pommes <label name="HN"/>.</snack>
+    </day>
+    <day num="4">
+        <extra></extra>
+        <starter>tarte du normandy day <label name="HN"/></starter>
+        <main>pintade <label name="HN"/> sauce normande</main>
+        <vegetable>mousseline de carottes <label name="AB"/></vegetable>
+        <dairy>neufchâtel <label name="HN"/></dairy>
+        <dessert>pavé cacao crème anglaise.</dessert>
+        <snack>banane, gaufre, lait <label name="AB"/>.</snack>
+    </day>
+    <day num="5">
+        <extra></extra>
+        <starter></starter>
+        <main></main>
+        <vegetable></vegetable>
+        <dairy></dairy>
+        <dessert></dessert>
+        <snack></snack>
+    </day>
+    <day num="6">
+        <extra></extra>
+        <starter></starter>
+        <main></main>
+        <vegetable></vegetable>
+        <dairy></dairy>
+        <dessert></dessert>
+        <snack></snack>
+    </day>
+</menu>

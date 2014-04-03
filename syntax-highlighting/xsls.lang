@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ Authors: Marco Barisione, Emanuele Aina, Frédéric Bisson
+ Copyright (C) 2005-2007 Marco Barisione <barisione@gmail.com>
+ Copyright (C) 2005-2007 Emanuele Aina
+ Copyright (C) 2014 Frédéric Bisson
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Library General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Library General Public License for more details.
+
+ You should have received a copy of the GNU Library General Public
+ License along with this library; if not, write to the
+ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ Boston, MA 02111-1307, USA.
+
+-->
+<language id="xsls" _name="XSLS" version="2.0" _section="Sources">
+    <metadata>
+      <property name="mimetypes">text/x-xsls</property>
+      <property name="globs">*.xsls</property>
+      <property name="line-comment-start">//</property>
+    </metadata>
+
+    <styles>
+        <style id="comment"           _name="Comment"             map-to="def:comment"/>
+        <style id="string"            _name="String"              map-to="def:string"/>
+        <style id="keyword"           _name="Keyword"             map-to="def:keyword"/>
+    </styles>
+
+    <definitions>
+        <define-regex id="escaped-character" extended="true">
+            \\(                   # leading backslash
+            [\\\"\]]              # escaped character
+            )
+        </define-regex>
+
+        <context id="xslp" class="no-spell-check">
+            <include>
+                <!-- Comments -->
+                <context id="comment" style-ref="comment" end-at-line-end="true" class="comment" class-disabled="no-spell-check">
+                    <start>//</start>
+
+                    <include>
+                      <context ref="def:in-line-comment"/>
+                    </include>
+                </context>
+
+                <context id="string" style-ref="string" end-at-line-end="true" class="string" class-disabled="no-spell-check">
+                    <start>L?"</start>
+                    <end>"</end>
+                    <include>
+                        <context ref="printf"/>
+                        <context id="escaped-character" style-ref="escaped-character">
+                            <match>\%{escaped-character}</match>
+                        </context>
+                        <context ref="def:line-continue"/>
+                    </include>
+                </context>
+
+                <!-- Keywords -->
+                <context id="keywords" style-ref="keyword" class="keyword">
+                    <keyword>apply-imports</keyword>
+                    <keyword>apply-templates</keyword>
+                    <keyword>attribute</keyword>
+                    <keyword>attribute-set</keyword>
+                    <keyword>call-template</keyword>
+                    <keyword>choose</keyword>
+                    <keyword>comment</keyword>
+                    <keyword>copy</keyword>
+                    <keyword>copy-of</keyword>
+                    <keyword>decimal-format</keyword>
+                    <keyword>element</keyword>
+                    <keyword>fallback</keyword>
+                    <keyword>for-each</keyword>
+                    <keyword>if</keyword>
+                    <keyword>import</keyword>
+                    <keyword>include</keyword>
+                    <keyword>key</keyword>
+                    <keyword>message</keyword>
+                    <keyword>namespace-alias</keyword>
+                    <keyword>number</keyword>
+                    <keyword>otherwise</keyword>
+                    <keyword>output</keyword>
+                    <keyword>param</keyword>
+                    <keyword>preserve-space</keyword>
+                    <keyword>processing-instruction</keyword>
+                    <keyword>sort</keyword>
+                    <keyword>strip-space</keyword>
+                    <keyword>stylesheet</keyword>
+                    <keyword>template</keyword>
+                    <keyword>text</keyword>
+                    <keyword>transform</keyword>
+                    <keyword>value-of</keyword>
+                    <keyword>variable</keyword>
+                    <keyword>when</keyword>
+                    <keyword>with-param</keyword>
+                </context>
+            </include>
+        </context>
+    </definitions>
+</language>

@@ -1,0 +1,94 @@
+// Menus template
+stylesheet(version="1.0", xmlns:xsl="http://www.w3.org/1999/XSL/Transform") {
+    // Output method is XML because if we use HTML, xsltproc will insert
+    // a meta tag specifying the charset. We do not want it since it is
+    // not compatible with HTML5 !
+    output(method="xml", omit-xml-declaration="yes", encoding="utf-8");
+
+    // Absolute image path relatively to the Document Root
+    variable(name="imagepath", select="'/path/to/img'");
+
+    variable(name="upper", select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'");
+    variable(name="lower", select="'abcdefghijklmnopqrstuvwxyz'");
+
+    // ========================================================================
+    // Functions
+    // ========================================================================
+    template(name="day-of-the-week") {
+        param(name="num");
+
+        choose() {
+            when(test="$num = 0") { [Lundi] }
+            when(test="$num = 1") { [Mardi] }
+            when(test="$num = 2") { [Mercredi] }
+            when(test="$num = 3") { [Jeudi] }
+            when(test="$num = 4") { [Vendredi] }
+            when(test="$num = 5") { [Samedi] }
+            when(test="$num = 6") { [Dimanche] }
+            otherwise();
+        }
+    }
+
+    // ========================================================================
+    // Apply template to menu tag
+    // ========================================================================
+    template(match="menu") {
+        variable(name="firstday", select="@firstday");
+
+        for-each(select="day") {
+            // Ignore days with no meal
+            if(test="string-length(main) > 0") {
+                [<h2>]
+                    call-template(name="day-of-the-week") {
+                        with-param(name="num", select="@num");
+                    }
+                [</h2>]
+                [<ul>]
+                    apply-templates();
+                [</ul>]
+            }
+        }
+    }
+
+    // ========================================================================
+    // Templates for dishes
+    // ========================================================================
+    template(match="extra|starter|main|vegetable|dairy|dessert") {
+        if(test="string-length(.) > 0") {
+            [<li class="{local-name()}">] apply-templates(); [</li>]
+        }
+    }
+
+    // Snacks are a little bit different
+    template(match="snack") {
+        if(test="string-length(.) > 0") {
+            [<li class="{local-name()}">Goûter&#160;: ] apply-templates(); [</li>]
+        }
+    }
+
+    // ========================================================================
+    // Templates for labels/pictograms
+    // ========================================================================
+    template(match="label") {
+        param(name="id", select="translate(@name, $upper, $lower)");
+        param(name="title") {
+            choose() {
+                when(test="@name = 'AB'") { [Agriculture biologique] }
+                when(test="@name = 'HN'") { [Produit de Haute-Normandie] }
+                when(test="@name = 'BN'") { [Produit de Basse-Normandie] }
+                when(test="@name = 'O3'") { [Oméga 3 naturels] }
+                when(test="@name = 'VPF'") { [Viande de porc française] }
+                when(test="@name = 'VBF'") { [Viande bovine française] }
+                when(test="@name = 'VF'") { [Volaille française] }
+                otherwise();
+            }
+        }
+
+        [<span class="picto-title" title="{$title}">
+            <img class="picto-rest picto-rest-{$id}"
+                 src="{$imagepath}/rest-{$id}.png"
+                 title="{$title}"
+            />
+        </span>]
+    }
+}
