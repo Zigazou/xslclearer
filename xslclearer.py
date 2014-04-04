@@ -3,6 +3,13 @@
 
 import re
 import sys
+from keywords.xslt_attributes import XSLT_ATTRIBUTES
+from keywords.xslt_tags import XSLT_TAGS
+from keywords.xsl_fo_attributes import XSL_FO_ATTRIBUTES
+from keywords.xsl_fo_tags import XSL_FO_TAGS
+
+XSL_ALL_TAGS = XSLT_TAGS + XSL_FO_TAGS
+XSL_ALL_ATTRIBUTES = XSLT_ATTRIBUTES + XSL_FO_ATTRIBUTES
 
 class XSLSTokenizerException(Exception):
     """Exception generated when the Tokenizer is unable to identify a token"""
@@ -162,20 +169,37 @@ class XSLSCompiler:
         """Read an instruction"""
         _, instruction, _ = self._consume('identifier')
 
+        if ':' not in instruction and instruction not in XSL_ALL_TAGS:
+            self._syntax_error("Unrecognized attribute " + instruction)
+
         params = self._read_parameters()
 
+        # Guess the namespace for the given instruction
+        if ':' in instruction:
+            namespace = instruction.split(':')[0]
+            instruction = instruction.split(':')[1]
+        else:
+            if instruction in XSLT_TAGS and instruction in XSL_FO_TAGS:
+                self._syntax_error("Ambiguous identifier " + instruction)
+
+            if instruction in XSLT_TAGS:
+                namespace = 'xsl'
+            else:
+                namespace = 'fo'
+
+        # Generate the XML tags
         if self._next_token_is('semicolon'):
             self._consume('semicolon')
-            return '<xsl:%s %s/>' % (instruction, params)
+            return '<%s:%s %s/>' % (namespace, instruction, params)
         elif self._next_token_is('curopen'):
             self._consume('curopen')
             
             program = self._read_program()
-            
-            output = '<xsl:%s %s>%s</xsl:%s>' % (
-                instruction, params,
+
+            output = '<%s:%s %s>%s</%s:%s>' % (
+                namespace, instruction, params,
                 program,
-                instruction
+                namespace, instruction
             )
             
             self._consume('curclose')
@@ -199,6 +223,10 @@ class XSLSCompiler:
     def _read_parameter(self):
         """Read a parameter"""
         _, parameter, _ = self._consume('identifier')
+
+        if ':' not in parameter and parameter not in XSL_ALL_ATTRIBUTES:
+            self._syntax_error("Unrecognized attribute " + parameter)
+
         self._consume('equals')
         _, value, _ = self._consume('string')
 
