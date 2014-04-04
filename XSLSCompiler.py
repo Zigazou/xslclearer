@@ -98,7 +98,6 @@ class XSLSCompiler:
             raise XSLSUnexpectedToken(
                 self._next_offset(),
                 self._next_token(),
-                name,
                 'identifier or inplace'
             )
 

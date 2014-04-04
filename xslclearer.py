@@ -4,22 +4,27 @@
 import sys
 from XSLSTokenizer import XSLSTokenizer
 from XSLSCompiler import XSLSCompiler
+from XSLSCompilerException import XSLSCompilerException
 
 def offset_to_column_line(text, offset):
+    """Convert an offset in a file to (row, column) coordinates"""
     if offset > len(text):
         return False
 
-    lines = '\n'.split(text)
+    lines = text.split('\n')
 
+    row = 0
+    column = offset
     for line_number in xrange(0, len(lines)):
         line_length = len(lines[line_number])
 
-        if offset < line_length:
+        if column < line_length:
+            row = line_number
             break
 
-        offset -= line_length
+        column -= line_length
 
-    return (line_number, offset)
+    return (row + 1, column + 1)
 
 def xsls_compile(xsls_file):
     """Converts an .xsls file into an .xslt file"""
@@ -33,9 +38,9 @@ def xsls_compile(xsls_file):
     try:
         compiler = XSLSCompiler(tokens)
         return compiler.compile()
-    except XSLSCompilerException as e:
-        row, column = offset_to_column_line
-        return "%s at row %d, column %d" % (e.message, row, column)
+    except XSLSCompilerException as exception:
+        row, column = offset_to_column_line(xslstext, exception.offset)
+        return "%s at row %d, column %d" % (exception.message, row, column)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

@@ -10,25 +10,39 @@ class XSLSTokenizerException(Exception):
 class XSLSTokenizer:
     """Tokenizer for .xsls files"""
     def __init__(self):
-        token_patterns = ['(?P<' + name + '>' + regexp + ')'
+        # Authorized characters for XML tags taken from
+        # http://www.w3.org/TR/xml/
+        common_char = ur':A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF'
+        common_char += ur'\u0370-\u037D\u037F-\u1FFF\u200C-\u200D'
+        common_char += ur'\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF'
+        common_char += ur'\uF900-\uFDCF\uFDF0-\uFFFD\U00010000-\U000EFFFF'
+
+        name_start_char = ur'[' + common_char + ur']'
+        name_char = ur'[' + common_char
+        name_char += ur'.0-9\u00B7\u0300-\u036F\u203F-\u2040-]'
+
+        token_patterns = [ur'(?P<' + name + ur'>' + regexp + ur')'
             for name, regexp in [
-                ('identifier', r'[a-zA-Z][a-zA-Z0-9:_-]*'),
-                ('string', r'"(\\"|\\\\|[^"])*"'),
-                ('semicolon', r';'),
-                ('comma', r','),
-                ('paropen', r'[(]'),
-                ('parclose', r'[)]'),
-                ('curopen', r'{'),
-                ('curclose', r'}'),
-                ('inplace', r'\[(\\]|\\\\|[^\]])*\]'),
-                ('newline', r'\n'),
-                ('whitespace', r'\s+'),
-                ('equals', r'='),
-                ('comment', r'//[^\n]*\n')
+                ('identifier', name_start_char + name_char + ur'*'),
+                ('string', ur'"(\\"|\\\\|[^"])*"'),
+                ('semicolon', ur';'),
+                ('comma', ur','),
+                ('paropen', ur'[(]'),
+                ('parclose', ur'[)]'),
+                ('curopen', ur'{'),
+                ('curclose', ur'}'),
+                ('inplace', ur'\[(\\]|\\\\|[^\]])*\]'),
+                ('newline', ur'\n'),
+                ('whitespace', ur'\s+'),
+                ('equals', ur'='),
+                ('comment', ur'//[^\n]*\n')
             ]
         ]
 
-        self.token_re = re.compile('|'.join(token_patterns), re.VERBOSE)
+        self.token_re = re.compile(
+            ur'|'.join(token_patterns),
+            re.VERBOSE | re.UNICODE
+        )
 
     def tokenize(self, text, skip=None):
         """Tokenizes .xsls files
