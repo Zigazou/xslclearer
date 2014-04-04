@@ -1,5 +1,13 @@
 #!/usr/bin/env python
-"""xslsreprocessor compile .xsls files into .xslt files"""
+"""This compile .xsls files into .xslt files"""
+
+from XSLSCompilerException import (
+    XSLSUnexpectedToken,
+    XSLSUnknownIdentifier, 
+    XSLSUnknownAttribute,
+    XSLSAmbiguousIdentifier,
+    XSLSNoMoreTokenException
+)
 
 from keywords.xslt_attributes import XSLT_ATTRIBUTES
 from keywords.xslt_tags import XSLT_TAGS
@@ -8,15 +16,6 @@ from keywords.xsl_fo_tags import XSL_FO_TAGS
 
 XSL_ALL_TAGS = XSLT_TAGS + XSL_FO_TAGS
 XSL_ALL_ATTRIBUTES = XSLT_ATTRIBUTES + XSL_FO_ATTRIBUTES
-
-class XSLSCompilerException(Exception):
-    """Exception generated when the XSLSCompiler encounters a syntax error"""
-    pass
-
-class XSLSNoMoreTokenException(Exception):
-    """Exception generated when the XSLSCompiler excpected another token
-    but there is none available"""
-    pass
 
 class XSLSCompiler:
     """The XSLSCompiler reads triplets (token name, value, offset) and produces
@@ -34,22 +33,21 @@ class XSLSCompiler:
         self.tokens = tokens
         self.current_pos = 0
 
-    def _syntax_error(self, message):
-        """Raise an XSLSCompilerException when there is a syntax error"""
-        raise XSLSCompilerException('Compiler stopped at %s(%s, %d): %s' % (
-            self.tokens[self.current_pos][0],
-            self.tokens[self.current_pos][1],
-            self.tokens[self.current_pos][2],
-            message
-        ))
-
     def _remaining(self):
         """Returns True if there are still some tokens to compile"""
         return self.current_pos < len(self.tokens)
 
+    def _next_token(self):
+        """Returns the next token"""
+        return self.tokens[self.current_pos]
+
+    def _next_offset(self):
+        """Returns current offset in the source file"""
+        return self.tokens[self.current_pos][2]
+
     def _next_token_is(self, name):
         """Tests if the next available token is of some name"""
-        tokname, _, _ = self.tokens[self.current_pos]
+        tokname, _, _ = self._next_token()
         
         if tokname == name:
             return True
@@ -65,7 +63,11 @@ class XSLSCompiler:
             raise XSLSNoMoreTokenException('No more token !')
 
         if name != None and not self._next_token_is(name):
-            self._syntax_error('%s' % (name,))
+            raise XSLSUnexpectedToken(
+                self._next_offset(),
+                self._next_token(),
+                name                
+            )
 
         token = self.tokens[self.current_pos]
         self.current_pos += 1
@@ -93,7 +95,12 @@ class XSLSCompiler:
         elif self._next_token_is('curclose'):
             return ''
         else:
-            self._syntax_error('identifier or inplace expected')
+            raise XSLSUnexpectedToken(
+                self._next_offset(),
+                self._next_token(),
+                name,
+                'identifier or inplace'
+            )
 
     def _read_inplace(self):
         """Read inplace"""
@@ -109,7 +116,7 @@ class XSLSCompiler:
         _, instruction, _ = self._consume('identifier')
 
         if ':' not in instruction and instruction not in XSL_ALL_TAGS:
-            self._syntax_error("Unrecognized attribute " + instruction)
+            raise XSLSUnknownIdentifier(self._next_offset(), instruction)
 
         params = self._read_parameters()
 
@@ -119,7 +126,10 @@ class XSLSCompiler:
             instruction = instruction.split(':')[1]
         else:
             if instruction in XSLT_TAGS and instruction in XSL_FO_TAGS:
-                self._syntax_error("Ambiguous identifier " + instruction)
+                raise XSLSAmbiguousIdentifier(
+                    self._next_offset(),
+                    instruction
+                )
 
             if instruction in XSLT_TAGS:
                 namespace = 'xsl'
@@ -145,7 +155,11 @@ class XSLSCompiler:
 
             return output
         else:
-            self._syntax_error('semicolon or curly brace expected')
+            raise XSLSUnexpectedToken(
+                self._next_offset(),
+                self._next_token(),
+                'semicolon or curly brace'
+            )
 
     def _read_parameters(self):
         """Read a parameter list"""
@@ -164,7 +178,7 @@ class XSLSCompiler:
         _, parameter, _ = self._consume('identifier')
 
         if ':' not in parameter and parameter not in XSL_ALL_ATTRIBUTES:
-            self._syntax_error("Unrecognized attribute " + parameter)
+            raise XSLSUnknownAttribute(self._next_offset(), parameter)
 
         self._consume('equals')
         _, value, _ = self._consume('string')
