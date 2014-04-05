@@ -23,19 +23,19 @@ class XSLSTokenizer:
 
         token_patterns = [ur'(?P<' + name + ur'>' + regexp + ur')'
             for name, regexp in [
-                ('identifier', name_start_char + name_char + ur'*'),
-                ('string', ur'"(\\"|\\\\|[^"])*"'),
-                ('semicolon', ur';'),
-                ('comma', ur','),
-                ('paropen', ur'[(]'),
-                ('parclose', ur'[)]'),
-                ('curopen', ur'{'),
-                ('curclose', ur'}'),
-                ('inplace', ur'\[(\\]|\\\\|[^\]])*\]'),
-                ('newline', ur'\n'),
-                ('whitespace', ur'\s+'),
-                ('equals', ur'='),
-                ('comment', ur'//[^\n]*\n')
+                (ur'identifier', name_start_char + name_char + ur'*'),
+                (ur'string', ur'"(\\"|\\\\|[^"])*"'),
+                (ur'semicolon', ur';'),
+                (ur'comma', ur','),
+                (ur'paropen', ur'[(]'),
+                (ur'parclose', ur'[)]'),
+                (ur'curopen', ur'{'),
+                (ur'curclose', ur'}'),
+                (ur'inplace', ur'\[(\\]|\\\\|[^\]])*\]'),
+                (ur'newline', ur'\n'),
+                (ur'whitespace', ur'\s+'),
+                (ur'equals', ur'='),
+                (ur'comment', ur'//[^\n]*\n')
             ]
         ]
 
