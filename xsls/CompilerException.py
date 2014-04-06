@@ -13,9 +13,9 @@ class UnexpectedToken(CompilerException):
     def __init__(self, offset, unexpected, expected):
         self.unexpected = unexpected
         self.expected = expected
-        message = "Unexpected %s, was expecting %s" % (
-            self.unexpected,
-            self.expected
+        message = "Unexpected {unexpected}, was expecting {expecting}".format(
+            unexpected=self.unexpected,
+            expected=self.expected
         )
         CompilerException.__init__(self, message, offset)
 
@@ -24,7 +24,9 @@ class UnknownIdentifier(CompilerException):
     identifier"""
     def __init__(self, offset, identifier):
         self.identifier = identifier
-        message = "Unknown identifier %s" % (self.identifier, )
+        message = "Unknown identifier {identifier}".format(
+            identifier=self.identifier
+        )
         CompilerException.__init__(self, message, offset)
 
 class UnknownAttribute(CompilerException):
@@ -32,7 +34,9 @@ class UnknownAttribute(CompilerException):
     attribute"""
     def __init__(self, offset, attribute):
         self.attribute = attribute
-        message = "Unknown attribute %s" % (self.attribute, )
+        message = "Unknown attribute {attribute}".format(
+            attribute=self.attribute
+        )
         CompilerException.__init__(self, message, offset)
 
 class AmbiguousIdentifier(CompilerException):
@@ -40,7 +44,9 @@ class AmbiguousIdentifier(CompilerException):
     identifier"""
     def __init__(self, offset, identifier):
         self.identifier = identifier
-        message = "Ambiguous identifier %s" % (self.identifier, )
+        message = "Ambiguous identifier {identifier}".format(
+            identifier=self.identifier
+        )
         CompilerException.__init__(self, message, offset)
 
 class NoMoreTokenException(Exception):
