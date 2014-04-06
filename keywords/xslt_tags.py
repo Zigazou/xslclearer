@@ -1,4 +1,4 @@
-#!/usr/bin/env python'
+#!/usr/bin/env python3
 """ List of all the available XSLT 2.0 tags"""
 
 XSLT_TAGS = [

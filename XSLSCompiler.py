@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-"""This compile .xsls files into .xslt files"""
+#!/usr/bin/env python3
+"""XSLSCompiler compiles tokens discovered by XSLSTokenizer into .xslt files"""
 
 from XSLSCompilerException import (
     XSLSUnexpectedToken,

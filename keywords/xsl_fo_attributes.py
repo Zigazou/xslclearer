@@ -1,4 +1,4 @@
-#!/usr/bin/env python'
+#!/usr/bin/env python3
 """ List of all the available XSL-FO attributes"""
 
 XSL_FO_ATTRIBUTES = [
