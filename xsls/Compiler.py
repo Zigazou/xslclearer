@@ -17,6 +17,12 @@ from .keywords.xsl_fo_tags import XSL_FO_TAGS
 XSL_ALL_TAGS = XSLT_TAGS + XSL_FO_TAGS
 XSL_ALL_ATTRIBUTES = XSLT_ATTRIBUTES + XSL_FO_ATTRIBUTES
 
+def multiple_replace(text, replaces):
+    for origin, destination in replaces:
+        text = text.replace(origin, destination)
+
+    return text
+
 class Compiler:
     """The Compiler reads triplets (token name, value, offset) and produces
     an .xslt file.
@@ -47,12 +53,9 @@ class Compiler:
 
     def _next_token_is(self, name):
         """Tests if the next available token is of some name"""
-        tokname, _, _ = self._next_token()
+        token_name, _, _ = self._next_token()
         
-        if tokname == name:
-            return True
-        else:
-            return False
+        return token_name == name
 
     def _consume(self, name=None):
         """Consume a token
@@ -69,9 +72,8 @@ class Compiler:
                 name                
             )
 
-        token = self.tokens[self.current_pos]
         self.current_pos += 1
-        return token
+        return self.tokens[self.current_pos - 1]
 
     def _read_program(self):
         """Read a program"""
@@ -105,10 +107,10 @@ class Compiler:
         """Read inplace"""
         _, inplace, _ = self._consume('inplace')
         
-        inplace = inplace[1:-1]
-        inplace = inplace.replace(r'\]', ']')
-        inplace = inplace.replace(r'\\', '\\')
-        return inplace
+        return multiple_replace(inplace[1:-1], (
+            (r'\]', ']'),
+            (r'\\', '\\')
+        ))
 
     def _read_instruction(self):
         """Read an instruction"""
@@ -185,11 +187,13 @@ class Compiler:
         self._consume('equals')
         _, value, _ = self._consume('string')
 
-        value = value.replace("&", "&amp;")
-        value = value.replace("<", "&lt;")
-        value = value.replace(">", "&gt;")
-        value = value.replace(r'\"', "&quot;")
-        value = value.replace(r'\\', '\\')
+        value = multiple_replace(value, (
+            ("&", "&amp;"),
+            ("<", "&lt;"),
+            (">", "&gt;"),
+            (r'\"', "&quot;"),
+            (r'\\', '\\')
+        ))
 
         if self._next_token_is('comma'):
             self._consume('comma')
