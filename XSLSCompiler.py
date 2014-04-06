@@ -138,16 +138,19 @@ class XSLSCompiler:
         # Generate the XML tags
         if self._next_token_is('semicolon'):
             self._consume('semicolon')
-            return '<%s:%s %s/>' % (namespace, instruction, params)
+            return '<{namespace}:{instruction} {params}/>'.format(
+                namespace=namespace,
+                instruction=instruction,
+                params=params
+            )
         elif self._next_token_is('curopen'):
             self._consume('curopen')
             
-            program = self._read_program()
-
-            output = '<%s:%s %s>%s</%s:%s>' % (
-                namespace, instruction, params,
-                program,
-                namespace, instruction
+            output = '<{nmspc}:{inst} {params}>{prg}</{nmspc}:{inst}>'.format(
+                nmspc=namespace,
+                prg=self._read_program(),
+                inst=instruction,
+                params=params,
             )
             
             self._consume('curclose')
@@ -191,11 +194,8 @@ class XSLSCompiler:
         if self._next_token_is('comma'):
             self._consume('comma')
 
-        return '%s=%s ' % (parameter, value)
+        return '{parameter}={value} '.format(parameter=parameter, value=value)
 
     def compile(self):
         """Compile the submitted list of tokens and generate an .xslt file"""
-        output = '<?xml version="1.0"?>'
-        output += "\n"
-        output += self._read_program()
-        return output
+        return "<?xml version=\"1.0\"?>\n{0}".format(self._read_program())

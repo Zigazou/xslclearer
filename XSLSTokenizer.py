@@ -47,7 +47,8 @@ class XSLSTokenizer:
     def tokenize(self, text, skip=None):
         """Tokenizes .xsls files
         
-        It yields triplets (token name, value, offset)
+        It yields triplets (token name, value, offset) if the token name is
+        not included in the skip list.
 
         Inspired by:
         http://stackoverflow.com/questions/2358890/
@@ -57,21 +58,24 @@ class XSLSTokenizer:
         if skip == None:
             skip = []
 
-        pos = 0
+        position = 0
         while True:
-            match = self.token_re.match(text, pos)
+            match = self.token_re.match(text, position)
 
             if not match:
                 break
 
-            pos = match.end()
-            tokname = match.lastgroup
-            tokvalue = match.group(tokname)
+            position = match.end()
+            token_name = match.lastgroup
+            token_value = match.group(token_name)
 
-            if not tokname in skip:
-                yield tokname, tokvalue, pos
+            if not token_name in skip:
+                yield token_name, token_value, position
 
-        if pos != len(text):
+        if position != len(text):
             raise XSLSTokenizerException(
-                'tokenizer stopped at pos %r of %r' % (pos, len(text))
+                'tokenizer stopped at pos {position} of {length}'.format(
+                    position=position,
+                    length=len(text)
+                )
             )
