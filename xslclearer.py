@@ -2,9 +2,7 @@
 """xslclearer compile .xsls files into .xslt files"""
 
 import sys
-from xsls.XSLSTokenizer import XSLSTokenizer
-from xsls.XSLSCompiler import XSLSCompiler
-from xsls.XSLSCompilerException import XSLSCompilerException
+import xsls
 
 def offset_to_column_line(text, offset):
     """Convert an offset in a file to (row, column) coordinates"""
@@ -15,7 +13,7 @@ def offset_to_column_line(text, offset):
 
     row = 0
     column = offset
-    for line_number in xrange(0, len(lines)):
+    for line_number in range(0, len(lines)):
         line_length = len(lines[line_number])
 
         if column < line_length:
@@ -30,15 +28,15 @@ def xsls_compile(xsls_file):
     """Converts an .xsls file into an .xslt file"""
     xslstext = xsls_file.read()
 
-    tokenizer = XSLSTokenizer()
+    tokenizer = xsls.Tokenizer()
 
     skips = ['whitespace', 'comment', 'newline']
     tokens = [token for token in tokenizer.tokenize(xslstext, skips)]
 
     try:
-        compiler = XSLSCompiler(tokens)
+        compiler = xsls.Compiler(tokens)
         return compiler.compile()
-    except XSLSCompilerException as exception:
+    except xsls.CompilerException as exception:
         row, column = offset_to_column_line(xslstext, exception.offset)
         return "%s at row %d, column %d" % (exception.message, row, column)
 

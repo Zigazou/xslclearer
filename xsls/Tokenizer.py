@@ -3,11 +3,11 @@
 
 import re
 
-class XSLSTokenizerException(Exception):
+class TokenizerException(Exception):
     """Exception generated when the Tokenizer is unable to identify a token"""
     pass
 
-class XSLSTokenizer:
+class Tokenizer:
     """Tokenizer for .xsls files"""
     def __init__(self):
         # Authorized characters for XML tags taken from
@@ -73,7 +73,7 @@ class XSLSTokenizer:
                 yield token_name, token_value, position
 
         if position != len(text):
-            raise XSLSTokenizerException(
+            raise TokenizerException(
                 'tokenizer stopped at pos {position} of {length}'.format(
                     position=position,
                     length=len(text)

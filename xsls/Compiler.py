@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""XSLSCompiler compiles tokens discovered by XSLSTokenizer into .xslt files"""
+"""Compiler compiles tokens discovered by Tokenizer into .xslt files"""
 
-from .XSLSCompilerException import (
-    XSLSUnexpectedToken,
-    XSLSUnknownIdentifier, 
-    XSLSUnknownAttribute,
-    XSLSAmbiguousIdentifier,
-    XSLSNoMoreTokenException
+from .CompilerException import (
+    UnexpectedToken,
+    UnknownIdentifier, 
+    UnknownAttribute,
+    AmbiguousIdentifier,
+    NoMoreTokenException
 )
 
 from .keywords.xslt_attributes import XSLT_ATTRIBUTES
@@ -17,8 +17,8 @@ from .keywords.xsl_fo_tags import XSL_FO_TAGS
 XSL_ALL_TAGS = XSLT_TAGS + XSL_FO_TAGS
 XSL_ALL_ATTRIBUTES = XSLT_ATTRIBUTES + XSL_FO_ATTRIBUTES
 
-class XSLSCompiler:
-    """The XSLSCompiler reads triplets (token name, value, offset) and produces
+class Compiler:
+    """The Compiler reads triplets (token name, value, offset) and produces
     an .xslt file.
 
     The grammar is very simple :
@@ -60,10 +60,10 @@ class XSLSCompiler:
         otherwise an exception is generated.
         """
         if not self._remaining():
-            raise XSLSNoMoreTokenException('No more token !')
+            raise NoMoreTokenException('No more token !')
 
         if name != None and not self._next_token_is(name):
-            raise XSLSUnexpectedToken(
+            raise UnexpectedToken(
                 self._next_offset(),
                 self._next_token(),
                 name                
@@ -95,7 +95,7 @@ class XSLSCompiler:
         elif self._next_token_is('curclose'):
             return ''
         else:
-            raise XSLSUnexpectedToken(
+            raise UnexpectedToken(
                 self._next_offset(),
                 self._next_token(),
                 'identifier or inplace'
@@ -115,7 +115,7 @@ class XSLSCompiler:
         _, instruction, _ = self._consume('identifier')
 
         if ':' not in instruction and instruction not in XSL_ALL_TAGS:
-            raise XSLSUnknownIdentifier(self._next_offset(), instruction)
+            raise UnknownIdentifier(self._next_offset(), instruction)
 
         params = self._read_parameters()
 
@@ -125,7 +125,7 @@ class XSLSCompiler:
             instruction = instruction.split(':')[1]
         else:
             if instruction in XSLT_TAGS and instruction in XSL_FO_TAGS:
-                raise XSLSAmbiguousIdentifier(
+                raise AmbiguousIdentifier(
                     self._next_offset(),
                     instruction
                 )
@@ -157,7 +157,7 @@ class XSLSCompiler:
 
             return output
         else:
-            raise XSLSUnexpectedToken(
+            raise UnexpectedToken(
                 self._next_offset(),
                 self._next_token(),
                 'semicolon or curly brace'
@@ -180,7 +180,7 @@ class XSLSCompiler:
         _, parameter, _ = self._consume('identifier')
 
         if ':' not in parameter and parameter not in XSL_ALL_ATTRIBUTES:
-            raise XSLSUnknownAttribute(self._next_offset(), parameter)
+            raise UnknownAttribute(self._next_offset(), parameter)
 
         self._consume('equals')
         _, value, _ = self._consume('string')
