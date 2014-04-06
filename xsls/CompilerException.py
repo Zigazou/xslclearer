@@ -14,7 +14,7 @@ class UnexpectedToken(CompilerException):
     def __init__(self, offset, unexpected, expected):
         self.unexpected = unexpected
         self.expected = expected
-        message = "Unexpected {unexpected}, was expecting {expecting}".format(
+        message = "Unexpected {unexpected}, was expecting {expected}".format(
             unexpected=self.unexpected,
             expected=self.expected
         )
