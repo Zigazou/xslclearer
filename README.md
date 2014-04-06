@@ -53,8 +53,7 @@ accordingly to your configuration).
 Requirements
 ------------
 
-XSLClearer has been developped with Python 2.7 and seems to work with Python
-3.0.
+XSLClearer has been developped with Python 3.
 
 It only requires the re and sys modules.
 
