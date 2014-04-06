@@ -38,7 +38,11 @@ def xsls_compile(xsls_file):
         return compiler.compile()
     except xsls.CompilerException as exception:
         row, column = offset_to_column_line(xslstext, exception.offset)
-        return "%s at row %d, column %d" % (exception.message, row, column)
+        return "{message} at row {row}, column {column}".format(
+            message=exception.message,
+            row=row,
+            column=column
+        )
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
