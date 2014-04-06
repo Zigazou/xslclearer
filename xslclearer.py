@@ -2,9 +2,9 @@
 """xslclearer compile .xsls files into .xslt files"""
 
 import sys
-from XSLSTokenizer import XSLSTokenizer
-from XSLSCompiler import XSLSCompiler
-from XSLSCompilerException import XSLSCompilerException
+from xsls.XSLSTokenizer import XSLSTokenizer
+from xsls.XSLSCompiler import XSLSCompiler
+from xsls.XSLSCompilerException import XSLSCompilerException
 
 def offset_to_column_line(text, offset):
     """Convert an offset in a file to (row, column) coordinates"""

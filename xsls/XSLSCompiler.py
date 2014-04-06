@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """XSLSCompiler compiles tokens discovered by XSLSTokenizer into .xslt files"""
 
-from XSLSCompilerException import (
+from .XSLSCompilerException import (
     XSLSUnexpectedToken,
     XSLSUnknownIdentifier, 
     XSLSUnknownAttribute,
@@ -9,10 +9,10 @@ from XSLSCompilerException import (
     XSLSNoMoreTokenException
 )
 
-from keywords.xslt_attributes import XSLT_ATTRIBUTES
-from keywords.xslt_tags import XSLT_TAGS
-from keywords.xsl_fo_attributes import XSL_FO_ATTRIBUTES
-from keywords.xsl_fo_tags import XSL_FO_TAGS
+from .keywords.xslt_attributes import XSLT_ATTRIBUTES
+from .keywords.xslt_tags import XSLT_TAGS
+from .keywords.xsl_fo_attributes import XSL_FO_ATTRIBUTES
+from .keywords.xsl_fo_tags import XSL_FO_TAGS
 
 XSL_ALL_TAGS = XSLT_TAGS + XSL_FO_TAGS
 XSL_ALL_ATTRIBUTES = XSLT_ATTRIBUTES + XSL_FO_ATTRIBUTES
