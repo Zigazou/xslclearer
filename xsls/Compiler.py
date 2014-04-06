@@ -13,9 +13,10 @@ from .keywords.xslt_attributes import XSLT_ATTRIBUTES
 from .keywords.xslt_tags import XSLT_TAGS
 from .keywords.xsl_fo_attributes import XSL_FO_ATTRIBUTES
 from .keywords.xsl_fo_tags import XSL_FO_TAGS
+from .keywords.xml_attributes import XML_ATTRIBUTES
 
 XSL_ALL_TAGS = XSLT_TAGS + XSL_FO_TAGS
-XSL_ALL_ATTRIBUTES = XSLT_ATTRIBUTES + XSL_FO_ATTRIBUTES
+XSL_ALL_ATTRIBUTES = XSLT_ATTRIBUTES + XSL_FO_ATTRIBUTES + XML_ATTRIBUTES
 
 def multiple_replace(text, replaces):
     for origin, destination in replaces:

@@ -5,6 +5,7 @@ class CompilerException(Exception):
     """Exception generated when the Compiler encounters a syntax error"""
     def __init__(self, message, offset):
         self.offset = offset
+        self.message = message
         Exception.__init__(self, message)
 
 class UnexpectedToken(CompilerException):
