@@ -201,7 +201,7 @@ class Compiler:
         if self._next_token_is('string'):
             _, value, _ = self._consume('string')
             self._consume('semicolon')
-            return '<variable name="{variable}" select={value} />'.format(
+            return '<xsl:variable name="{variable}" select={value} />'.format(
                 variable=variable,
                 value=value
             )
