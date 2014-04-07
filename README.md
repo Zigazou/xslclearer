@@ -12,6 +12,8 @@ It is in fact a very crude compiler (lexical+grammar).
 Documentation
 -------------
 
+### Tags ###
+
 The xsls format converts :
 
     tag(attribute="value", attribute="value") {
@@ -39,6 +41,55 @@ the back-slash.
 
 If you need to use a double quote inside the " ", you may escape it using
 the back-slash.
+
+### Variables ###
+
+The xsls format converts :
+
+    $variable = "string";
+
+into
+
+    <xsl:variable name="variable" select="string" />
+    
+The xsls format converts :
+
+    $variable = {
+        instructions
+    }
+
+into
+
+    <xsl:variable name="variable">
+        instructions
+    </xsl:variable>
+
+### Tags with only one attribute ###
+
+The xsls format converts :
+
+    call-template("string") {
+        instructions
+    }
+
+into
+
+    <xsl:call-template name="string">
+        instructions
+    </xsl:call-template>
+
+It works for the following tags (attribute) :
+
+* if and when (test),
+* for-each (select),
+* call-template (name).
+
+### Tag and attribute verification ###
+
+The compiler verifies that identifiers are from the XSL or XSL-FO tags lists.
+Specifying a namespace disables the verification.
+
+The verification alsa applies to the attributes.
 
 Install
 -------
