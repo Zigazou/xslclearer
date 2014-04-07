@@ -18,6 +18,21 @@ from .keywords.xml_attributes import XML_ATTRIBUTES
 XSL_ALL_TAGS = XSLT_TAGS + XSL_FO_TAGS
 XSL_ALL_ATTRIBUTES = XSLT_ATTRIBUTES + XSL_FO_ATTRIBUTES + XML_ATTRIBUTES
 
+XSL_TAGS_ONE_ATTRIBUTE ={
+    'when': 'test',
+    'if': 'test',
+    'for-each': 'select',
+    'call-template': 'name',
+    'include': 'href',
+    'import': 'href',
+    'copy': 'use-attribute-sets',
+    'copy-of': 'select',
+    'message': 'terminate',
+    'preserve-space': 'elements',
+    'strip-space': 'elements',
+    'text': 'disable-output-escaping',
+}
+
 def multiple_replace(text, replaces):
     for origin, destination in replaces:
         text = text.replace(origin, destination)
@@ -147,12 +162,8 @@ class Compiler:
 
         # Guess the name of the attribute for a string as unique parameter
         if len(params) >= 1 and params[0] == '"':
-            if instruction == 'when' or instruction == 'if':
-                attribute = 'test'
-            elif instruction == 'for-each':
-                attribute = 'select'
-            elif instruction == 'call-template':
-                attribute = 'name'
+            if instruction in XSL_TAGS_ONE_ATTRIBUTE:
+                attribute = XSL_TAGS_ONE_ATTRIBUTE[instruction]
             else:
                 raise UnknownAttribute(self._next_offset(), params)
 
