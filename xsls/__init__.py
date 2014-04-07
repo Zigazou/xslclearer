@@ -3,4 +3,4 @@
 
 from .compiler_exception import CompilerException
 from .compiler import Compiler
-from .tokenizer import Tokenizer
+from .tokenizer import Tokenizer, TokenizerException

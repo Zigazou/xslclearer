@@ -5,7 +5,10 @@ import re
 
 class TokenizerException(Exception):
     """Exception generated when the Tokenizer is unable to identify a token"""
-    pass
+    def __init__(self, offset):
+        self.offset = offset
+        self.message = 'unexpected character'
+        Exception.__init__(self, self.message)
 
 class Tokenizer:
     """Tokenizer for .xsls files"""
@@ -36,7 +39,7 @@ class Tokenizer:
                 ('curopen', '{'),
                 ('curclose', '}'),
                 ('inplace', '\\[(\\\\]|\\\\\\\\|[^\\]])*\\]'),
-                ('newline', '\\n'),
+                ('newline', '\\r\\n|\\n|\\r'),
                 ('whitespace', '\\s+'),
                 ('equals', '='),
                 ('comment', '//[^\\n]*\\n')
@@ -77,9 +80,4 @@ class Tokenizer:
                 yield token_name, token_value, position
 
         if position != len(text):
-            raise TokenizerException(
-                'tokenizer stopped at pos {position} of {length}'.format(
-                    position=position,
-                    length=len(text)
-                )
-            )
+            raise TokenizerException(position)

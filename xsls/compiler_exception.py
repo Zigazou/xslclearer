@@ -15,7 +15,7 @@ class UnexpectedToken(CompilerException):
         self.unexpected = unexpected
         self.expected = expected
         message = "Unexpected {unexpected}, was expecting {expected}".format(
-            unexpected=self.unexpected,
+            unexpected=self.unexpected[0],
             expected=self.expected
         )
         CompilerException.__init__(self, message, offset)
