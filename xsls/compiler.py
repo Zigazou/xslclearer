@@ -28,13 +28,15 @@ class Compiler:
     """The Compiler reads triplets (token name, value, offset) and produces
     an .xslt file.
 
-    The grammar is very simple :
+    The grammar is simple :
     program = command*
     command = instruction
             | affectation
             | inplace
     instruction = identifier '(' parameter* ')' '{' program '}'
                 | identifier '(' parameter* ')' ';'
+                | identifier '(' string ')' '{' program '}'
+                | identifier '(' string ')' ';'
     affectation = variable '=' '(' parameter* ')' ';'
                 | variable '=' '{' program '}'
     parameter = identifier '=' string
@@ -143,6 +145,22 @@ class Compiler:
             else:
                 namespace = 'fo'
 
+        # Guess the name of the attribute for a string as unique parameter
+        if len(params) >= 1 and params[0] == '"':
+            if instruction == 'when' or instruction == 'if':
+                attribute = 'test'
+            elif instruction == 'for-each':
+                attribute = 'select'
+            elif instruction == 'call-template':
+                attribute = 'name'
+            else:
+                raise UnknownAttribute(self._next_offset(), params)
+
+            params = '{attribute}={value}'.format(
+                attribute=attribute,
+                value=params
+            )
+
         # Generate the XML tags
         if self._next_token_is('semicolon'):
             self._consume('semicolon')
@@ -183,7 +201,7 @@ class Compiler:
         if self._next_token_is('string'):
             _, value, _ = self._consume('string')
             self._consume('semicolon')
-            return '<variable name="{variable}" value={value} />'.format(
+            return '<variable name="{variable}" select={value} />'.format(
                 variable=variable,
                 value=value
             )
@@ -209,9 +227,12 @@ class Compiler:
         """Read a parameter list"""
         self._consume('paropen')
 
-        output = ''
-        while self._next_token_is('identifier'):
-            output += self._read_parameter()
+        if self._next_token_is('string'):
+            _, output, _ = self._consume('string')
+        else:
+            output = ''
+            while self._next_token_is('identifier'):
+                output += self._read_parameter()
 
         self._consume('parclose')
 
