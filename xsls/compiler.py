@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Compiler compiles tokens discovered by Tokenizer into .xslt files"""
 
-from .CompilerException import (
+from .compiler_exception import (
     UnexpectedToken,
     UnknownIdentifier, 
     UnknownAttribute,
@@ -31,9 +31,12 @@ class Compiler:
     The grammar is very simple :
     program = command*
     command = instruction
+            | affectation
             | inplace
     instruction = identifier '(' parameter* ')' '{' program '}'
                 | identifier '(' parameter* ')' ';'
+    affectation = variable '=' '(' parameter* ')' ';'
+                | variable '=' '{' program '}'
     parameter = identifier '=' string
     """
     def __init__(self, tokens):
@@ -95,13 +98,15 @@ class Compiler:
             return self._read_instruction()
         elif self._next_token_is('inplace'):
             return self._read_inplace()
+        elif self._next_token_is('variable'):
+            return self._read_affectation()
         elif self._next_token_is('curclose'):
             return ''
         else:
             raise UnexpectedToken(
                 self._next_offset(),
                 self._next_token(),
-                'identifier or inplace'
+                'identifier, variable or inplace'
             )
 
     def _read_inplace(self):
@@ -164,6 +169,40 @@ class Compiler:
                 self._next_offset(),
                 self._next_token(),
                 'semicolon or curly brace'
+            )
+
+    def _read_affectation(self):
+        """Read an affectation"""
+        _, variable, _ = self._consume('variable')
+        
+        # Remove $ from the beginning
+        variable = variable[1:]
+
+        self._consume('equals')
+
+        if self._next_token_is('string'):
+            _, value, _ = self._consume('string')
+            self._consume('semicolon')
+            return '<variable name="{variable}" value={value} />'.format(
+                variable=variable,
+                value=value
+            )
+        elif self._next_token_is('curopen'):
+            self._consume('curopen')
+            
+            output = '<xsl:variable name="{var}">{prg}</xsl:variable>'.format(
+                var=variable,
+                prg=self._read_program()
+            )
+            
+            self._consume('curclose')
+
+            return output
+        else:
+            raise UnexpectedToken(
+                self._next_offset(),
+                self._next_token(),
+                'string or curly brace'
             )
 
     def _read_parameters(self):

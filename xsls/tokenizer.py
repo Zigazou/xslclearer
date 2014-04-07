@@ -27,6 +27,7 @@ class Tokenizer:
         token_patterns = ['(?P<' + name + '>' + regexp + ')'
             for name, regexp in [
                 ('identifier', name_start_char + name_char + '*'),
+                ('variable', '\\$' + name_start_char + name_char + '*'),
                 ('string', '"(\\\\"|\\\\\\\\|[^"])*"'),
                 ('semicolon', ';'),
                 ('comma', ','),

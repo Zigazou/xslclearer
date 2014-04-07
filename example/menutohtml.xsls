@@ -6,10 +6,10 @@ stylesheet(version="1.0", xmlns:xsl="http://www.w3.org/1999/XSL/Transform") {
     output(method="xml", omit-xml-declaration="yes", encoding="utf-8");
 
     // Absolute image path relatively to the Document Root
-    variable(name="imagepath", select="'/path/to/img'");
+    $imagepath = "'/path/to/img'";
 
-    variable(name="upper", select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'");
-    variable(name="lower", select="'abcdefghijklmnopqrstuvwxyz'");
+    $upper = "'ABCDEFGHIJKLMNOPQRSTUVWXYZ'";
+    $lower = "'abcdefghijklmnopqrstuvwxyz'";
 
     // ========================================================================
     // Functions
@@ -33,7 +33,7 @@ stylesheet(version="1.0", xmlns:xsl="http://www.w3.org/1999/XSL/Transform") {
     // Apply template to menu tag
     // ========================================================================
     template(match="menu") {
-        variable(name="firstday", select="@firstday");
+        $firstday = "@firstday";
 
         for-each(select="day") {
             // Ignore days with no meal
