@@ -80,9 +80,18 @@ into
 
 It works for the following tags (attribute) :
 
-* if and when (test),
+* when (test),
+* if (test),
 * for-each (select),
-* call-template (name).
+* call-template (name),
+* include (href),
+* import (href),
+* copy (use-attribute-sets),
+* copy-of (select),
+* message (terminate),
+* preserve-space (elements),
+* strip-space (elements),
+* text (disable-output-escaping).
 
 ### Tag and attribute verification ###
 
