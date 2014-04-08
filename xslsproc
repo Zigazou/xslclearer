@@ -24,21 +24,21 @@ def main():
     input_file = parameters[xsls_index]
         
     # Compile the XSLS input
-    code, output = xsls_compile(open(input_file))
+    code, output = xslclearer.xsls_compile(open(input_file))
 
     if code != 0:
         print(output, file=sys.stderr)
         sys.exit(code)
 
     xslt_file = tempfile.NamedTemporaryFile(delete=False)
-    print(output, file=xslt_file)
+    xslt_file.write(bytes(output, 'UTF-8'))
     xslt_file.close()
 
     parameters[xsls_index] = xslt_file.name
     
     call(["xsltproc"] + parameters)
 
-    os.remove(xslt_file)
+    os.remove(xslt_file.name)
 
 if __name__ == "__main__":
     main()
