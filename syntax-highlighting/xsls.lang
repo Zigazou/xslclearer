@@ -32,66 +32,83 @@
     <styles>
         <style id="comment"           _name="Comment"             map-to="def:comment"/>
         <style id="string"            _name="String"              map-to="def:string"/>
-        <style id="keyword"           _name="Keyword"             map-to="def:keyword"/>
+        <style id="statement"         _name="Statement"           map-to="def:statement"/>
+        <style id="inplace"           _name="Inplace"             map-to="def:special-constant"/>
+        <style id="attribute"         _name="Attribute"           map-to="def:identifier"/>
     </styles>
 
     <definitions>
-        <define-regex id="escaped-character" extended="true">
-            \\(                   # leading backslash
-            [\\\"\]]              # escaped character
-            )
-        </define-regex>
-
-        <context id="xslp" class="no-spell-check">
+        <context id="xsls" class="no-spell-check">
             <include>
                 <!-- Comments -->
-                <context id="comment" style-ref="comment" end-at-line-end="true" class="comment" class-disabled="no-spell-check">
-                    <start>//</start>
+                <context id="comment" style-ref="comment">
+                    <start>\/\/</start>
+                    <end>$</end>
+                </context>
 
+                <!-- Strings -->
+                <context id="string" style-ref="string" end-at-line-end="false">
+                    <start>"</start>
+                    <end>"</end>
                     <include>
-                      <context ref="def:in-line-comment"/>
+                        <context id="escaped-character1" style-ref="escaped-character">
+                            <match>\\[\\"]</match>
+                        </context>
                     </include>
                 </context>
 
-                <context id="string" style-ref="string" end-at-line-end="true" class="string" class-disabled="no-spell-check">
-                    <start>L?"</start>
-                    <end>"</end>
+                <!-- Inplace -->
+                <context id="inplace" style-ref="inplace" end-at-line-end="false">
+                    <start>\[</start>
+                    <end>\]</end>
                     <include>
-                        <context ref="printf"/>
-                        <context id="escaped-character" style-ref="escaped-character">
-                            <match>\%{escaped-character}</match>
+                        <context id="escaped-character2" style-ref="escaped-character">
+                            <match>\\[\\\]]</match>
                         </context>
-                        <context ref="def:line-continue"/>
                     </include>
                 </context>
 
                 <!-- Keywords -->
-                <context id="keywords" style-ref="keyword" class="keyword">
+                <context id="statements" style-ref="statement" class="statement">
+                    <keyword>analyze-string</keyword>
                     <keyword>apply-imports</keyword>
                     <keyword>apply-templates</keyword>
                     <keyword>attribute</keyword>
                     <keyword>attribute-set</keyword>
                     <keyword>call-template</keyword>
+                    <keyword>character-map</keyword>
                     <keyword>choose</keyword>
                     <keyword>comment</keyword>
                     <keyword>copy</keyword>
                     <keyword>copy-of</keyword>
                     <keyword>decimal-format</keyword>
+                    <keyword>document</keyword>
                     <keyword>element</keyword>
                     <keyword>fallback</keyword>
                     <keyword>for-each</keyword>
+                    <keyword>for-each-group</keyword>
+                    <keyword>function</keyword>
                     <keyword>if</keyword>
                     <keyword>import</keyword>
+                    <keyword>import-schema</keyword>
                     <keyword>include</keyword>
                     <keyword>key</keyword>
+                    <keyword>matching-substring</keyword>
                     <keyword>message</keyword>
+                    <keyword>namespace</keyword>
                     <keyword>namespace-alias</keyword>
+                    <keyword>next-match</keyword>
+                    <keyword>non-matching-substring</keyword>
                     <keyword>number</keyword>
                     <keyword>otherwise</keyword>
                     <keyword>output</keyword>
+                    <keyword>output-character</keyword>
                     <keyword>param</keyword>
+                    <keyword>perform-sort</keyword>
                     <keyword>preserve-space</keyword>
                     <keyword>processing-instruction</keyword>
+                    <keyword>result-document</keyword>
+                    <keyword>sequence</keyword>
                     <keyword>sort</keyword>
                     <keyword>strip-space</keyword>
                     <keyword>stylesheet</keyword>
@@ -102,6 +119,423 @@
                     <keyword>variable</keyword>
                     <keyword>when</keyword>
                     <keyword>with-param</keyword>
+
+                    <keyword>root</keyword>
+                    <keyword>declarations</keyword>
+                    <keyword>color-profile</keyword>
+                    <keyword>page-sequence</keyword>
+                    <keyword>page-sequence-wrapper</keyword>
+                    <keyword>layout-master-set</keyword>
+                    <keyword>page-sequence-master</keyword>
+                    <keyword>single-page-master-reference</keyword>
+                    <keyword>repeatable-page-master-reference</keyword>
+                    <keyword>repeatable-page-master-alternatives</keyword>
+                    <keyword>conditional-page-master-reference</keyword>
+                    <keyword>simple-page-master</keyword>
+                    <keyword>region-body</keyword>
+                    <keyword>region-before</keyword>
+                    <keyword>region-after</keyword>
+                    <keyword>region-start</keyword>
+                    <keyword>region-end</keyword>
+                    <keyword>flow</keyword>
+                    <keyword>static-content</keyword>
+                    <keyword>title</keyword>
+                    <keyword>flow-map</keyword>
+                    <keyword>flow-assignment</keyword>
+                    <keyword>flow-source-list</keyword>
+                    <keyword>flow-name-specifier</keyword>
+                    <keyword>flow-target-list</keyword>
+                    <keyword>region-name-specifier</keyword>
+                    <keyword>block</keyword>
+                    <keyword>block-container</keyword>
+                    <keyword>bidi-override</keyword>
+                    <keyword>character</keyword>
+                    <keyword>initial-property-set</keyword>
+                    <keyword>external-graphic</keyword>
+                    <keyword>instream-foreign-object</keyword>
+                    <keyword>inline</keyword>
+                    <keyword>inline-container</keyword>
+                    <keyword>leader</keyword>
+                    <keyword>page-number</keyword>
+                    <keyword>page-number-citation</keyword>
+                    <keyword>page-number-citation-last</keyword>
+                    <keyword>folio-prefix</keyword>
+                    <keyword>folio-suffix</keyword>
+                    <keyword>scaling-value-citation</keyword>
+                    <keyword>table-and-caption</keyword>
+                    <keyword>table</keyword>
+                    <keyword>table-column</keyword>
+                    <keyword>table-caption</keyword>
+                    <keyword>table-header</keyword>
+                    <keyword>table-footer</keyword>
+                    <keyword>table-body</keyword>
+                    <keyword>table-row</keyword>
+                    <keyword>table-cell</keyword>
+                    <keyword>list-block</keyword>
+                    <keyword>list-item</keyword>
+                    <keyword>list-item-body</keyword>
+                    <keyword>list-item-label</keyword>
+                    <keyword>basic-link</keyword>
+                    <keyword>multi-switch</keyword>
+                    <keyword>multi-case</keyword>
+                    <keyword>multi-toggle</keyword>
+                    <keyword>multi-properties</keyword>
+                    <keyword>multi-property-set</keyword>
+                    <keyword>index-page-number-prefix</keyword>
+                    <keyword>index-page-number-suffix</keyword>
+                    <keyword>index-range-begin</keyword>
+                    <keyword>index-range-end</keyword>
+                    <keyword>index-key-reference</keyword>
+                    <keyword>index-page-citation-list</keyword>
+                    <keyword>index-page-citation-list-separator</keyword>
+                    <keyword>index-page-citation-range-separator</keyword>
+                    <keyword>bookmark-tree</keyword>
+                    <keyword>bookmark</keyword>
+                    <keyword>bookmark-title</keyword>
+                    <keyword>float</keyword>
+                    <keyword>footnote</keyword>
+                    <keyword>footnote-body</keyword>
+                    <keyword>change-bar-begin</keyword>
+                    <keyword>change-bar-end</keyword>
+                    <keyword>wrapper</keyword>
+                    <keyword>marker</keyword>
+                    <keyword>retrieve-marker</keyword>
+                    <keyword>retrieve-table-marker</keyword>
+                </context>
+
+                <context id="attributes" style-ref="attribute" class="attribute">
+                    <keyword>source-document</keyword>
+                    <keyword>role</keyword>
+                    <keyword>absolute-position</keyword>
+                    <keyword>top</keyword>
+                    <keyword>right</keyword>
+                    <keyword>bottom</keyword>
+                    <keyword>left</keyword>
+                    <keyword>azimuth</keyword>
+                    <keyword>cue-after</keyword>
+                    <keyword>cue-before</keyword>
+                    <keyword>elevation</keyword>
+                    <keyword>pause-after</keyword>
+                    <keyword>pause-before</keyword>
+                    <keyword>pitch</keyword>
+                    <keyword>pitch-range</keyword>
+                    <keyword>play-during</keyword>
+                    <keyword>richness</keyword>
+                    <keyword>speak</keyword>
+                    <keyword>speak-header</keyword>
+                    <keyword>speak-numeral</keyword>
+                    <keyword>speak-punctuation</keyword>
+                    <keyword>speech-rate</keyword>
+                    <keyword>stress</keyword>
+                    <keyword>voice-family</keyword>
+                    <keyword>volume</keyword>
+                    <keyword>background-attachment</keyword>
+                    <keyword>background-color</keyword>
+                    <keyword>background-image</keyword>
+                    <keyword>background-repeat</keyword>
+                    <keyword>background-position-horizontal</keyword>
+                    <keyword>background-position-vertical</keyword>
+                    <keyword>border-before-color</keyword>
+                    <keyword>border-before-style</keyword>
+                    <keyword>border-before-width</keyword>
+                    <keyword>border-after-color</keyword>
+                    <keyword>border-after-style</keyword>
+                    <keyword>border-after-width</keyword>
+                    <keyword>border-start-color</keyword>
+                    <keyword>border-start-style</keyword>
+                    <keyword>border-start-width</keyword>
+                    <keyword>border-end-color</keyword>
+                    <keyword>border-end-style</keyword>
+                    <keyword>border-end-width</keyword>
+                    <keyword>border-top-color</keyword>
+                    <keyword>border-top-style</keyword>
+                    <keyword>border-top-width</keyword>
+                    <keyword>border-bottom-color</keyword>
+                    <keyword>border-bottom-style</keyword>
+                    <keyword>border-bottom-width</keyword>
+                    <keyword>border-left-color</keyword>
+                    <keyword>border-left-style</keyword>
+                    <keyword>border-left-width</keyword>
+                    <keyword>border-right-color</keyword>
+                    <keyword>border-right-style</keyword>
+                    <keyword>border-right-width</keyword>
+                    <keyword>padding-before</keyword>
+                    <keyword>padding-after</keyword>
+                    <keyword>padding-start</keyword>
+                    <keyword>padding-end</keyword>
+                    <keyword>padding-top</keyword>
+                    <keyword>padding-bottom</keyword>
+                    <keyword>padding-left</keyword>
+                    <keyword>padding-right</keyword>
+                    <keyword>Fonts and Font Data</keyword>
+                    <keyword>font-family</keyword>
+                    <keyword>font-selection-strategy</keyword>
+                    <keyword>font-size</keyword>
+                    <keyword>font-stretch</keyword>
+                    <keyword>font-size-adjust</keyword>
+                    <keyword>font-style</keyword>
+                    <keyword>font-variant</keyword>
+                    <keyword>font-weight</keyword>
+                    <keyword>country</keyword>
+                    <keyword>language</keyword>
+                    <keyword>script</keyword>
+                    <keyword>hyphenate</keyword>
+                    <keyword>hyphenation-character</keyword>
+                    <keyword>hyphenation-push-character-count</keyword>
+                    <keyword>hyphenation-remain-character-count</keyword>
+                    <keyword>margin-top</keyword>
+                    <keyword>margin-bottom</keyword>
+                    <keyword>margin-left</keyword>
+                    <keyword>margin-right</keyword>
+                    <keyword>space-before</keyword>
+                    <keyword>space-after</keyword>
+                    <keyword>start-indent</keyword>
+                    <keyword>end-indent</keyword>
+                    <keyword>margin-top</keyword>
+                    <keyword>margin-bottom</keyword>
+                    <keyword>margin-left</keyword>
+                    <keyword>margin-right</keyword>
+                    <keyword>space-end</keyword>
+                    <keyword>space-start</keyword>
+                    <keyword>top</keyword>
+                    <keyword>right</keyword>
+                    <keyword>bottom</keyword>
+                    <keyword>left</keyword>
+                    <keyword>relative-position</keyword>
+                    <keyword>alignment-adjust</keyword>
+                    <keyword>alignment-baseline</keyword>
+                    <keyword>baseline-shift</keyword>
+                    <keyword>display-align</keyword>
+                    <keyword>dominant-baseline</keyword>
+                    <keyword>relative-align</keyword>
+                    <keyword>allowed-height-scale</keyword>
+                    <keyword>allowed-width-scale</keyword>
+                    <keyword>block-progression-dimension</keyword>
+                    <keyword>content-height</keyword>
+                    <keyword>content-width</keyword>
+                    <keyword>height</keyword>
+                    <keyword>inline-progression-dimension</keyword>
+                    <keyword>max-height</keyword>
+                    <keyword>max-width</keyword>
+                    <keyword>min-height</keyword>
+                    <keyword>min-width</keyword>
+                    <keyword>scaling</keyword>
+                    <keyword>scaling-method</keyword>
+                    <keyword>width</keyword>
+                    <keyword>hyphenation-keep</keyword>
+                    <keyword>hyphenation-ladder-count</keyword>
+                    <keyword>last-line-end-indent</keyword>
+                    <keyword>line-height</keyword>
+                    <keyword>line-height-shift-adjustment</keyword>
+                    <keyword>line-stacking-strategy</keyword>
+                    <keyword>linefeed-treatment</keyword>
+                    <keyword>white-space-treatment</keyword>
+                    <keyword>text-align</keyword>
+                    <keyword>text-align-last</keyword>
+                    <keyword>text-indent</keyword>
+                    <keyword>white-space-collapse</keyword>
+                    <keyword>wrap-option</keyword>
+                    <keyword>character</keyword>
+                    <keyword>letter-spacing</keyword>
+                    <keyword>suppress-at-line-break</keyword>
+                    <keyword>text-decoration</keyword>
+                    <keyword>text-shadow</keyword>
+                    <keyword>text-transform</keyword>
+                    <keyword>treat-as-word-space</keyword>
+                    <keyword>word-spacing</keyword>
+                    <keyword>color</keyword>
+                    <keyword>color-profile-name</keyword>
+                    <keyword>rendering-intent</keyword>
+                    <keyword>clear</keyword>
+                    <keyword>float</keyword>
+                    <keyword>intrusion-displace</keyword>
+                    <keyword>break-after</keyword>
+                    <keyword>break-before</keyword>
+                    <keyword>keep-together</keyword>
+                    <keyword>keep-with-next</keyword>
+                    <keyword>keep-with-previous</keyword>
+                    <keyword>orphans</keyword>
+                    <keyword>widows</keyword>
+                    <keyword>clip</keyword>
+                    <keyword>overflow</keyword>
+                    <keyword>reference-orientation</keyword>
+                    <keyword>span</keyword>
+                    <keyword>leader-alignment</keyword>
+                    <keyword>leader-pattern</keyword>
+                    <keyword>leader-pattern-width</keyword>
+                    <keyword>leader-length</keyword>
+                    <keyword>rule-style</keyword>
+                    <keyword>rule-thickness</keyword>
+                    <keyword>active-state</keyword>
+                    <keyword>auto-restore</keyword>
+                    <keyword>case-name</keyword>
+                    <keyword>case-title</keyword>
+                    <keyword>destination-placement-offset</keyword>
+                    <keyword>external-destination</keyword>
+                    <keyword>indicate-destination</keyword>
+                    <keyword>internal-destination</keyword>
+                    <keyword>show-destination</keyword>
+                    <keyword>starting-state</keyword>
+                    <keyword>switch-to</keyword>
+                    <keyword>target-presentation-context</keyword>
+                    <keyword>target-processing-context</keyword>
+                    <keyword>target-stylesheet</keyword>
+                    <keyword>index-class</keyword>
+                    <keyword>index-key</keyword>
+                    <keyword>page-number-treatment</keyword>
+                    <keyword>merge-ranges-across-index-key-references</keyword>
+                    <keyword>merge-sequential-page-numbers</keyword>
+                    <keyword>merge-pages-across-index-key-references</keyword>
+                    <keyword>ref-index-key</keyword>
+                    <keyword>marker-class-name</keyword>
+                    <keyword>retrieve-boundary-within-table</keyword>
+                    <keyword>retrieve-class-name</keyword>
+                    <keyword>retrieve-position</keyword>
+                    <keyword>retrieve-boundary</keyword>
+                    <keyword>retrieve-position-within-table</keyword>
+                    <keyword>format</keyword>
+                    <keyword>grouping-separator</keyword>
+                    <keyword>grouping-size</keyword>
+                    <keyword>letter-value</keyword>
+                    <keyword>blank-or-not-blank</keyword>
+                    <keyword>column-count</keyword>
+                    <keyword>column-gap</keyword>
+                    <keyword>extent</keyword>
+                    <keyword>flow-name</keyword>
+                    <keyword>force-page-count</keyword>
+                    <keyword>initial-page-number</keyword>
+                    <keyword>master-name</keyword>
+                    <keyword>master-reference</keyword>
+                    <keyword>maximum-repeats</keyword>
+                    <keyword>media-usage</keyword>
+                    <keyword>odd-or-even</keyword>
+                    <keyword>page-height</keyword>
+                    <keyword>page-position</keyword>
+                    <keyword>page-width</keyword>
+                    <keyword>precedence</keyword>
+                    <keyword>region-name</keyword>
+                    <keyword>flow-map-name</keyword>
+                    <keyword>flow-map-reference</keyword>
+                    <keyword>flow-name-reference</keyword>
+                    <keyword>region-name-reference</keyword>
+                    <keyword>border-after-precedence</keyword>
+                    <keyword>border-before-precedence</keyword>
+                    <keyword>border-collapse</keyword>
+                    <keyword>border-end-precedence</keyword>
+                    <keyword>border-separation</keyword>
+                    <keyword>border-start-precedence</keyword>
+                    <keyword>caption-side</keyword>
+                    <keyword>column-number</keyword>
+                    <keyword>column-width</keyword>
+                    <keyword>empty-cells</keyword>
+                    <keyword>ends-row</keyword>
+                    <keyword>number-columns-repeated</keyword>
+                    <keyword>number-columns-spanned</keyword>
+                    <keyword>number-rows-spanned</keyword>
+                    <keyword>starts-row</keyword>
+                    <keyword>table-layout</keyword>
+                    <keyword>table-omit-footer-at-break</keyword>
+                    <keyword>table-omit-header-at-break</keyword>
+                    <keyword>direction</keyword>
+                    <keyword>glyph-orientation-horizontal</keyword>
+                    <keyword>glyph-orientation-vertical</keyword>
+                    <keyword>text-altitude</keyword>
+                    <keyword>text-depth</keyword>
+                    <keyword>unicode-bidi</keyword>
+                    <keyword>writing-mode</keyword>
+                    <keyword>change-bar-class</keyword>
+                    <keyword>change-bar-color</keyword>
+                    <keyword>change-bar-offset</keyword>
+                    <keyword>change-bar-placement</keyword>
+                    <keyword>change-bar-style</keyword>
+                    <keyword>change-bar-width</keyword>
+                    <keyword>content-type</keyword>
+                    <keyword>id</keyword>
+                    <keyword>intrinsic-scale-value</keyword>
+                    <keyword>page-citation-strategy</keyword>
+                    <keyword>provisional-label-separation</keyword>
+                    <keyword>provisional-distance-between-starts</keyword>
+                    <keyword>ref-id</keyword>
+                    <keyword>scale-option</keyword>
+                    <keyword>score-spaces</keyword>
+                    <keyword>src</keyword>
+                    <keyword>visibility</keyword>
+                    <keyword>z-index</keyword>
+                    <keyword>background</keyword>
+                    <keyword>background-position</keyword>
+                    <keyword>border</keyword>
+                    <keyword>border-bottom</keyword>
+                    <keyword>border-color</keyword>
+                    <keyword>border-left</keyword>
+                    <keyword>border-right</keyword>
+                    <keyword>border-style</keyword>
+                    <keyword>border-spacing</keyword>
+                    <keyword>border-top</keyword>
+                    <keyword>border-width</keyword>
+                    <keyword>cue</keyword>
+                    <keyword>font</keyword>
+                    <keyword>margin</keyword>
+                    <keyword>padding</keyword>
+                    <keyword>page-break-after</keyword>
+                    <keyword>page-break-before</keyword>
+                    <keyword>page-break-inside</keyword>
+                    <keyword>pause</keyword>
+                    <keyword>position</keyword>
+                    <keyword>size</keyword>
+                    <keyword>vertical-align</keyword>
+                    <keyword>white-space</keyword>
+                    <keyword>xml:lang</keyword>
+                    <keyword>case-order</keyword>
+                    <keyword>cdata-section-elements</keyword>
+                    <keyword>count</keyword>
+                    <keyword>data-type</keyword>
+                    <keyword>decimal-separator</keyword>
+                    <keyword>digit</keyword>
+                    <keyword>disable-output-escaping</keyword>
+                    <keyword>doctype-public</keyword>
+                    <keyword>doctype-system</keyword>
+                    <keyword>elements</keyword>
+                    <keyword>encoding</keyword>
+                    <keyword>exclude-result-prefixes</keyword>
+                    <keyword>extension-element-prefixes</keyword>
+                    <keyword>format</keyword>
+                    <keyword>from</keyword>
+                    <keyword>grouping-separator</keyword>
+                    <keyword>grouping-size</keyword>
+                    <keyword>href</keyword>
+                    <keyword>id</keyword>
+                    <keyword>indent</keyword>
+                    <keyword>infinity</keyword>
+                    <keyword>lang</keyword>
+                    <keyword>letter-value</keyword>
+                    <keyword>level</keyword>
+                    <keyword>match</keyword>
+                    <keyword>media-type</keyword>
+                    <keyword>method</keyword>
+                    <keyword>minus-sign</keyword>
+                    <keyword>mode</keyword>
+                    <keyword>name</keyword>
+                    <keyword>namespace</keyword>
+                    <keyword>NaN</keyword>
+                    <keyword>omit-xml-declaration</keyword>
+                    <keyword>order</keyword>
+                    <keyword>pattern-separator</keyword>
+                    <keyword>per-mille</keyword>
+                    <keyword>percent</keyword>
+                    <keyword>priority</keyword>
+                    <keyword>result-prefix</keyword>
+                    <keyword>select</keyword>
+                    <keyword>standalone</keyword>
+                    <keyword>stylesheet-prefix</keyword>
+                    <keyword>terminate</keyword>
+                    <keyword>test</keyword>
+                    <keyword>use</keyword>
+                    <keyword>use-attribute-sets</keyword>
+                    <keyword>value</keyword>
+                    <keyword>version</keyword>
+                    <keyword>xml:space</keyword>
+                    <keyword>xmlns:xsl</keyword>
+                    <keyword>zero-digit</keyword>
                 </context>
             </include>
         </context>
