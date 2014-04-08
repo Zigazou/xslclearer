@@ -1,11 +1,44 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-xslsfile="$1"
-xmlfile="$2"
-xsltfile=$(mktemp)
+from subprocess import call
+import sys
+import os
+import tempfile
+import xslclearer
 
-./xslclearer.py "$xslsfile" > "$xsltfile"
+def main():
+    # Copy the parameters without the command name
+    parameters = sys.argv[1:]
 
-xsltproc "$xsltfile" "$xmlfile"
+    # Find the XSLS file in the parameters
+    xsls_index = None
+    for index in range(len(parameters)):
+        if parameters[index][-5:] == '.xsls':
+            xsls_index = index
+            break
 
-rm -- "$xsltfile"
+    if xsls_index == None:
+        # File not found
+        pass
+
+    input_file = parameters[xsls_index]
+        
+    # Compile the XSLS input
+    code, output = xsls_compile(open(input_file))
+
+    if code != 0:
+        print(output, file=sys.stderr)
+        sys.exit(code)
+
+    xslt_file = tempfile.NamedTemporaryFile(delete=False)
+    print(output, file=xslt_file)
+    xslt_file.close()
+
+    parameters[xsls_index] = xslt_file.name
+    
+    call(["xsltproc"] + parameters)
+
+    os.remove(xslt_file)
+
+if __name__ == "__main__":
+    main()
