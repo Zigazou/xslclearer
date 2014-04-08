@@ -120,9 +120,17 @@ It only requires the re and sys modules.
 Usage
 -----
 
-    python xslclearer.py input.xsls > output.xslt
+    python3 xslclearer.py input.xsls > output.xslt
     
-    cat input.xsls | python xslclearer.py > output.xslt
+    cat input.xsls | python3 xslclearer.py > output.xslt
+
+    xslsproc style.xsls input.xml > output
+
+The xslsproc is a wrapper for the xsltproc command. It analyzes the options to
+find the an xsls file. If it can be found, the file is transparently converted
+to an xslt stylesheet and feed to xsltproc. Every other option is passed
+without any change. You can therefore use xslsproc exactly like you would use
+xsltproc except it understands xsls files and not xslt files.
 
 Example
 -------
