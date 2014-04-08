@@ -1,0 +1,33 @@
+// Transform XSL Template into XSLS format
+stylesheet(
+    version="1.0",
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+) {
+    output(method="text", encoding="utf-8");
+
+    template(match="xsl:*") {
+        choose() {
+            when("name()='xsl:variable'") {
+                [$]value-of(select="@name");[="]value-of(select="@select");[";]
+            }
+            otherwise() {
+                value-of(select="substring-after(name(), 'xsl:')");
+                [(]call-template("attributes");[) {]
+                    apply-templates();
+                [}]
+            }
+        }
+    }
+
+    template(match="*") {
+        [[&lt;]value-of(select="name()");[&gt;\]]
+        apply-templates();
+        [[&lt;/]value-of(select="name()");[&gt;\]]
+    }
+    
+    template(name="attributes") {
+        for-each("@*") {
+            value-of(select="concat(name(), '=\"', ., '\", ')");
+        }   
+    }
+}

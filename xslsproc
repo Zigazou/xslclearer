@@ -1,0 +1,11 @@
+#!/bin/bash
+
+xslsfile="$1"
+xmlfile="$2"
+xsltfile=$(mktemp)
+
+./xslclearer.py "$xslsfile" > "$xsltfile"
+
+xsltproc "$xsltfile" "$xmlfile"
+
+rm -- "$xsltfile"
