@@ -5,29 +5,118 @@ stylesheet(
 ) {
     output(method="text", encoding="utf-8");
 
-    template(match="xsl:*") {
+    // Special template for the xsl:variable tag (shortcut)
+    template(match="xsl:variable") {
         choose() {
-            when("name()='xsl:variable'") {
-                [$]value-of(select="@name");[="]value-of(select="@select");[";]
+            // $variable = value;
+            when("string-length(@select) > 0") {
+                [$]value-of(select="@name");[ = "]value-of(select="@select");[";]
             }
+            
+            // $variable = { program }
             otherwise() {
-                value-of(select="substring-after(name(), 'xsl:')");
-                [(]call-template("attributes");[) {]
+                [$]value-of(select="@name");[ = {]
                     apply-templates();
                 [}]
             }
         }
     }
 
+    // Shortcut for for-each tag
+    template(match="xsl:for-each") {
+        [for-each("]value-of(select="@select");[") {]
+            apply-templates();
+        [}]
+    }
+
+    // Shortcut for when tag
+    template(match="xsl:when") {
+        [when("]value-of(select="@test");[") {]
+            apply-templates();
+        [}]
+    }
+
+    // Shortcut for if tag
+    template(match="xsl:if") {
+        [if("]value-of(select="@test");[") {]
+            apply-templates();
+        [}]
+    }
+
+    // Shortcut for call-template tag
+    template(match="xsl:call-template") {
+        choose() {
+            // $variable = value;
+            when("*") {
+                [call-template("]value-of(select="@name");[") {]
+                    apply-templates();
+                [}]
+            }
+            
+            // $variable = { program }
+            otherwise() {
+                [call-template("]value-of(select="@name");[");]
+            }
+        }
+    }
+
+    // Template for every other xsl tag
+    template(match="xsl:*") {
+        value-of(select="substring-after(name(), 'xsl:')");
+        [(]call-template("attributes");[)]
+        choose() {
+            when("*") {
+                [ {]
+                    apply-templates();
+                [}]
+            }
+            otherwise() {
+                [;]
+            }
+        }
+    }
+
+    // Handle every other tag
     template(match="*") {
-        [[&lt;]value-of(select="name()");[&gt;\]]
+        $tag = {
+            value-of(select="name()");
+            for-each("@*") {
+                value-of(select="concat(' ', name(), '=\"', ., '\"')");
+            }
+        }
+
+        [[&lt;]value-of(select="$tag");[&gt;\]]
         apply-templates();
         [[&lt;/]value-of(select="name()");[&gt;\]]
     }
-    
+
+    // Handle text
+    template(match="*/text()") {
+        choose() {
+            when("string-length(normalize-space(.)) > 0") {
+                [[]value-of(select=".");[\]]
+            }
+            otherwise() {
+                value-of(select=".");
+            }
+        }
+    }
+
+    // Template for attributes
     template(name="attributes") {
-        for-each("@*") {
-            value-of(select="concat(name(), '=\"', ., '\", ')");
-        }   
+        $attributes = {
+            for-each("@*") {
+                value-of(select="concat(name(), '=\"', ., '\", ')");
+            }
+        }
+
+        // Delete the last comma
+        if("string-length($attributes) > 0") {
+            value-of(select="substring($attributes, 0, string-length($attributes) - 1)");
+        }
+    }
+    
+    // Template for comments
+    template(match="comment()") {
     }
 }
