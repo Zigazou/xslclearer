@@ -5,6 +5,41 @@ stylesheet(
 ) {
     output(method="text", encoding="utf-8");
 
+    // Replace string in string
+    template(name="replace") {
+        param $value, $search, $replace;
+
+        if("contains($value,$search)") {
+            value-of(select="concat(substring-before($value,$search),$replace)");
+
+            call-template("replace") {
+                with-param $value = "substring-after($value,$search)",
+                           $search = "$search",
+                           $replace = "$replace";
+            }
+        }
+
+        if("not(contains($value,$search))") {
+            value-of(select="$value");
+        }
+    }
+
+    template(name="escapeString") {
+        param $string;
+
+        $string = {
+            call-template("replace") {
+                with-param $value = "$string", $search = "\"", $replace = "\\\"";
+            }
+        }
+
+        $string = {
+            call-template("replace") {
+                with-param $value = "$string", $search = "\\", $replace = "\\\\";
+            }
+        }
+    }
+
     // Special template for the xsl:variable tag (shortcut)
     template(match="xsl:variable") {
         choose() {
@@ -56,6 +91,49 @@ stylesheet(
             // $variable = { program }
             otherwise() {
                 [call-template("]value-of(select="@name");[");]
+            }
+        }
+    }
+
+    // Shortcut for param tag
+    template(match="xsl:param") {
+        choose() {
+            // param $variable = { program };
+            when("*") {
+                [param $]value-of(select="@name");[ = {]
+                    apply-templates();
+                [}]
+            }
+
+            // param $variable = value;
+            when("@select") {
+                [param $]value-of(select="@name");[ = "]value-of(select="@select");[";]
+            }
+
+            otherwise() {
+                [param $]value-of(select="@name");[;]
+            }
+        }
+    }
+
+    // Shortcut for with-param tag
+    template(match="xsl:with-param") {
+        choose() {
+            // param $variable = { program };
+            when("*") {
+                [with-param $]value-of(select="@name");[ = {]
+                    apply-templates();
+                [}]
+            }
+
+            // param $variable = value;
+            when("@select") {
+                [with-param $]value-of(select="@name");
+                [ = "]call-template("escapeString") { with-param $string = "@select"; }[";]
+            }
+
+            otherwise() {
+                [with-param $]value-of(select="@name");[;]
             }
         }
     }

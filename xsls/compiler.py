@@ -205,6 +205,9 @@ class Compiler:
 
                 outputs.append(output)
 
+                if self._next_token_is('comma'):
+                    self._consume('comma')
+
                 continue
 
             if self._next_token_is('curopen'):
@@ -220,6 +223,9 @@ class Compiler:
                 self._consume('curclose')
 
                 outputs.append(output)
+
+                if self._next_token_is('comma'):
+                    self._consume('comma')
 
                 continue
 
