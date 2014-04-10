@@ -18,7 +18,7 @@ from .keywords.xml_attributes import XML_ATTRIBUTES
 XSL_ALL_TAGS = XSLT_TAGS + XSL_FO_TAGS
 XSL_ALL_ATTRIBUTES = XSLT_ATTRIBUTES + XSL_FO_ATTRIBUTES + XML_ATTRIBUTES
 
-XSL_TAGS_ONE_ATTRIBUTE ={
+XSL_TAGS_ONE_ATTRIBUTE = {
     'when': 'test',
     'if': 'test',
     'for-each': 'select',
@@ -34,6 +34,7 @@ XSL_TAGS_ONE_ATTRIBUTE ={
 }
 
 def multiple_replace(text, replaces):
+    """Apply multiple replacement on the same string"""
     for origin, destination in replaces:
         text = text.replace(origin, destination)
 
@@ -48,11 +49,14 @@ class Compiler:
     command = instruction
             | affectation
             | inplace
-    instruction = identifier '(' parameter* ')' '{' program '}'
-                | identifier '(' parameter* ')' ';'
-                | identifier '(' string ')' '{' program '}'
-                | identifier '(' string ')' ';'
-    affectation = variable '=' '(' parameter* ')' ';'
+    instruction = identifier '(' parameter ( ',' parameter )* ')'
+                  ( ';' | '{' program '}')
+                | identifier '(' string ')' (';' | '{' program '}')
+                | 'param' defparam ( ',' defparam )* ';'
+                | 'param' variable '=' '{' program '}'
+    defparam = variable
+             | variable '=' string
+    affectation = variable '=' string ';'
                 | variable '=' '{' program '}'
     parameter = identifier '=' string
     """
@@ -135,16 +139,8 @@ class Compiler:
             (r'\\', '\\')
         ))
 
-    def _read_instruction(self):
-        """Read an instruction"""
-        _, instruction, _ = self._consume('identifier')
-
-        if ':' not in instruction and instruction not in XSL_ALL_TAGS:
-            raise UnknownIdentifier(self._next_offset(), instruction)
-
-        params = self._read_parameters()
-
-        # Guess the namespace for the given instruction
+    def _cut_namespace(self, instruction):
+        """Guess the namespace for the given instruction"""
         if ':' in instruction:
             namespace = instruction.split(':')[0]
             instruction = instruction.split(':')[1]
@@ -160,7 +156,10 @@ class Compiler:
             else:
                 namespace = 'fo'
 
-        # Guess the name of the attribute for a string as unique parameter
+        return (namespace, instruction)
+
+    def _guess_parameter_name(self, instruction, params):
+        """Guess the name of the attribute for a string as unique parameter"""
         if len(params) >= 1 and params[0] == '"':
             if instruction in XSL_TAGS_ONE_ATTRIBUTE:
                 attribute = XSL_TAGS_ONE_ATTRIBUTE[instruction]
@@ -171,6 +170,77 @@ class Compiler:
                 attribute=attribute,
                 value=params
             )
+
+        return params
+
+    def _read_defparam(self, namespace, instruction):
+        """Read a param of defparam"""
+        outputs = []
+        while self._next_token_is('variable'):
+            _, variable, _ = self._consume('variable')
+
+            if not self._next_token_is('equals'):
+                output = '<{nmspc}:{inst} name="{name}"/>'.format(
+                    nmspc=namespace,
+                    inst=instruction,
+                    name=variable[1:]
+                )
+                
+                outputs.append(output)
+
+                if self._next_token_is('comma'):
+                    self._consume('comma')
+
+                continue
+            
+            self._consume('equals')
+            if self._next_token_is('string'):
+                _, value, _ = self._consume('string')
+                output = '<{ns}:{ins} name="{nm}" select="{sl}"/>'.format(
+                    ns=namespace,
+                    ins=instruction,
+                    nm=variable[1:],
+                    sl=value[1:-1]
+                )
+
+                outputs.append(output)
+
+                continue
+
+            if self._next_token_is('curopen'):
+                self._consume('curopen')
+
+                output = '<{ns}:{ins} name="{nm}">{prg}</{ns}:{ins}>'.format(
+                    ns=namespace,
+                    nm=variable[1:],
+                    prg=self._read_program(),
+                    ins=instruction,
+                )
+
+                self._consume('curclose')
+
+                outputs.append(output)
+
+                continue
+
+        self._consume('semicolon')
+            
+        return ''.join(outputs)
+
+    def _read_instruction(self):
+        """Read an instruction"""
+        _, instruction, _ = self._consume('identifier')
+
+        if ':' not in instruction and instruction not in XSL_ALL_TAGS:
+            raise UnknownIdentifier(self._next_offset(), instruction)
+
+        namespace, instruction = self._cut_namespace(instruction)
+
+        if instruction in ['param', 'with-param']:
+            return self._read_defparam(namespace, instruction)
+
+        params = self._read_parameters()
+        params = self._guess_parameter_name(instruction, params)
 
         # Generate the XML tags
         if self._next_token_is('semicolon'):
@@ -193,12 +263,12 @@ class Compiler:
             self._consume('curclose')
 
             return output
-        else:
-            raise UnexpectedToken(
-                self._next_offset(),
-                self._next_token(),
-                'semicolon or curly brace'
-            )
+
+        raise UnexpectedToken(
+            self._next_offset(),
+            self._next_token(),
+            'semicolon or curly brace'
+        )
 
     def _read_affectation(self):
         """Read an affectation"""

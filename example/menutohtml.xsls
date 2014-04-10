@@ -15,7 +15,7 @@ stylesheet(version="1.0", xmlns:xsl="http://www.w3.org/1999/XSL/Transform") {
     // Functions
     // ========================================================================
     template(name="day-of-the-week") {
-        param(name="num");
+        param $num;
 
         choose() {
             when("$num = 0") { [Lundi] }
@@ -40,7 +40,7 @@ stylesheet(version="1.0", xmlns:xsl="http://www.w3.org/1999/XSL/Transform") {
             if("string-length(main) > 0") {
                 [<h2>]
                     call-template("day-of-the-week") {
-                        with-param(name="num", select="@num");
+                        with-param $num = "@num";
                     }
                 [</h2>]
                 [<ul>]
@@ -70,8 +70,8 @@ stylesheet(version="1.0", xmlns:xsl="http://www.w3.org/1999/XSL/Transform") {
     // Templates for labels/pictograms
     // ========================================================================
     template(match="label") {
-        param(name="id", select="translate(@name, $upper, $lower)");
-        param(name="title") {
+        param $id = "translate(@name, $upper, $lower)";
+        param $title = {
             choose() {
                 when("@name = 'AB'") { [Agriculture biologique] }
                 when("@name = 'HN'") { [Produit de Haute-Normandie] }
@@ -82,7 +82,7 @@ stylesheet(version="1.0", xmlns:xsl="http://www.w3.org/1999/XSL/Transform") {
                 when("@name = 'VF'") { [Volaille française] }
                 otherwise();
             }
-        }
+        };
 
         [<span class="picto-title" title="{$title}">
             <img class="picto-rest picto-rest-{$id}"
