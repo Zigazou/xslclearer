@@ -11,6 +11,7 @@ from .compiler_exception import (
 
 from .keywords.xslt_attributes import XSLT_ATTRIBUTES
 from .keywords.xslt_tags import XSLT_TAGS
+from .keywords.xslt_tags_one_attribute import XSLT_TAGS_ONE_ATTRIBUTE
 from .keywords.xsl_fo_attributes import XSL_FO_ATTRIBUTES
 from .keywords.xsl_fo_tags import XSL_FO_TAGS
 from .keywords.xml_attributes import XML_ATTRIBUTES
@@ -18,27 +19,21 @@ from .keywords.xml_attributes import XML_ATTRIBUTES
 XSL_ALL_TAGS = XSLT_TAGS + XSL_FO_TAGS
 XSL_ALL_ATTRIBUTES = XSLT_ATTRIBUTES + XSL_FO_ATTRIBUTES + XML_ATTRIBUTES
 
-XSL_TAGS_ONE_ATTRIBUTE = {
-    'when': 'test',
-    'if': 'test',
-    'for-each': 'select',
-    'call-template': 'name',
-    'include': 'href',
-    'import': 'href',
-    'copy': 'use-attribute-sets',
-    'copy-of': 'select',
-    'message': 'terminate',
-    'preserve-space': 'elements',
-    'strip-space': 'elements',
-    'text': 'disable-output-escaping',
-}
-
 def multiple_replace(text, replaces):
     """Apply multiple replacement on the same string"""
     for origin, destination in replaces:
         text = text.replace(origin, destination)
 
     return text
+
+def xml_escape_string(text):
+    return multiple_replace(text, (
+        ("&", "&amp;"),
+        ("<", "&lt;"),
+        (">", "&gt;"),
+        (r'\"', "&quot;"),
+        (r'\\', '\\')
+    ))
 
 class Compiler:
     """The Compiler reads triplets (token name, value, offset) and produces
@@ -59,6 +54,7 @@ class Compiler:
     affectation = variable '=' string ';'
                 | variable '=' '{' program '}'
     parameter = identifier '=' string
+              | string
     """
     def __init__(self, tokens):
         self.tokens = tokens
@@ -161,8 +157,8 @@ class Compiler:
     def _guess_parameter_name(self, instruction, params):
         """Guess the name of the attribute for a string as unique parameter"""
         if len(params) >= 1 and params[0] == '"':
-            if instruction in XSL_TAGS_ONE_ATTRIBUTE:
-                attribute = XSL_TAGS_ONE_ATTRIBUTE[instruction]
+            if instruction in XSLT_TAGS_ONE_ATTRIBUTE:
+                attribute = XSLT_TAGS_ONE_ATTRIBUTE[instruction]
             else:
                 raise UnknownAttribute(self._next_offset(), params)
 
@@ -316,10 +312,15 @@ class Compiler:
 
         if self._next_token_is('string'):
             _, output, _ = self._consume('string')
+            output = xml_escape_string(output)
+
+            if self._next_token_is('comma'):
+                self._consume('comma')
         else:
             output = ''
-            while self._next_token_is('identifier'):
-                output += self._read_parameter()
+
+        while self._next_token_is('identifier'):
+            output += self._read_parameter()
 
         self._consume('parclose')
 
@@ -335,18 +336,13 @@ class Compiler:
         self._consume('equals')
         _, value, _ = self._consume('string')
 
-        value = multiple_replace(value, (
-            ("&", "&amp;"),
-            ("<", "&lt;"),
-            (">", "&gt;"),
-            (r'\"', "&quot;"),
-            (r'\\', '\\')
-        ))
-
         if self._next_token_is('comma'):
             self._consume('comma')
 
-        return '{parameter}={value} '.format(parameter=parameter, value=value)
+        return '{parameter}={value} '.format(
+            parameter=parameter,
+            value=xml_escape_string(value)
+        )
 
     def compile(self):
         """Compile the submitted list of tokens and generate an .xslt file"""

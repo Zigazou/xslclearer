@@ -6,11 +6,11 @@ stylesheet(
     output(method="text", encoding="utf-8");
 
     // Replace string in string
-    template(name="replace") {
+    template("replace") {
         param $value, $search, $replace;
 
         if("contains($value,$search)") {
-            value-of(select="concat(substring-before($value,$search),$replace)");
+            value-of("concat(substring-before($value,$search),$replace)");
 
             call-template("replace") {
                 with-param $value = "substring-after($value,$search)",
@@ -20,11 +20,11 @@ stylesheet(
         }
 
         if("not(contains($value,$search))") {
-            value-of(select="$value");
+            value-of("$value");
         }
     }
 
-    template(name="escapeString") {
+    template("escapeString") {
         param $string;
 
         $string = {
@@ -45,12 +45,12 @@ stylesheet(
         choose() {
             // $variable = value;
             when("string-length(@select) > 0") {
-                [$]value-of(select="@name");[ = "]value-of(select="@select");[";]
+                [$]value-of("@name");[ = "]value-of("@select");[";]
             }
             
             // $variable = { program }
             otherwise() {
-                [$]value-of(select="@name");[ = {]
+                [$]value-of("@name");[ = {]
                     apply-templates();
                 [}]
             }
@@ -59,21 +59,21 @@ stylesheet(
 
     // Shortcut for for-each tag
     template(match="xsl:for-each") {
-        [for-each("]value-of(select="@select");[") {]
+        [for-each("]value-of("@select");[") {]
             apply-templates();
         [}]
     }
 
     // Shortcut for when tag
     template(match="xsl:when") {
-        [when("]value-of(select="@test");[") {]
+        [when("]value-of("@test");[") {]
             apply-templates();
         [}]
     }
 
     // Shortcut for if tag
     template(match="xsl:if") {
-        [if("]value-of(select="@test");[") {]
+        [if("]value-of("@test");[") {]
             apply-templates();
         [}]
     }
@@ -83,14 +83,14 @@ stylesheet(
         choose() {
             // $variable = value;
             when("*") {
-                [call-template("]value-of(select="@name");[") {]
+                [call-template("]value-of("@name");[") {]
                     apply-templates();
                 [}]
             }
             
             // $variable = { program }
             otherwise() {
-                [call-template("]value-of(select="@name");[");]
+                [call-template("]value-of("@name");[");]
             }
         }
     }
@@ -100,18 +100,18 @@ stylesheet(
         choose() {
             // param $variable = { program };
             when("*") {
-                [param $]value-of(select="@name");[ = {]
+                [param $]value-of("@name");[ = {]
                     apply-templates();
                 [}]
             }
 
             // param $variable = value;
             when("@select") {
-                [param $]value-of(select="@name");[ = "]value-of(select="@select");[";]
+                [param $]value-of("@name");[ = "]value-of("@select");[";]
             }
 
             otherwise() {
-                [param $]value-of(select="@name");[;]
+                [param $]value-of("@name");[;]
             }
         }
     }
@@ -121,26 +121,26 @@ stylesheet(
         choose() {
             // param $variable = { program };
             when("*") {
-                [with-param $]value-of(select="@name");[ = {]
+                [with-param $]value-of("@name");[ = {]
                     apply-templates();
                 [}]
             }
 
             // param $variable = value;
             when("@select") {
-                [with-param $]value-of(select="@name");
+                [with-param $]value-of("@name");
                 [ = "]call-template("escapeString") { with-param $string = "@select"; }[";]
             }
 
             otherwise() {
-                [with-param $]value-of(select="@name");[;]
+                [with-param $]value-of("@name");[;]
             }
         }
     }
 
     // Template for every other xsl tag
     template(match="xsl:*") {
-        value-of(select="substring-after(name(), 'xsl:')");
+        value-of("substring-after(name(), 'xsl:')");
         [(]call-template("attributes");[)]
         choose() {
             when("*") {
@@ -157,44 +157,43 @@ stylesheet(
     // Handle every other tag
     template(match="*") {
         $tag = {
-            value-of(select="name()");
+            value-of("name()");
             for-each("@*") {
-                value-of(select="concat(' ', name(), '=\"', ., '\"')");
+                value-of("concat(' ', name(), '=\"', ., '\"')");
             }
         }
 
-        [[&lt;]value-of(select="$tag");[&gt;\]]
+        [[&lt;]value-of("$tag");[&gt;\]]
         apply-templates();
-        [[&lt;/]value-of(select="name()");[&gt;\]]
+        [[&lt;/]value-of("name()");[&gt;\]]
     }
 
     // Handle text
     template(match="*/text()") {
         choose() {
             when("string-length(normalize-space(.)) > 0") {
-                [[]value-of(select=".");[\]]
+                [[]value-of(".");[\]]
             }
             otherwise() {
-                value-of(select=".");
+                value-of(".");
             }
         }
     }
 
     // Template for attributes
-    template(name="attributes") {
+    template("attributes") {
         $attributes = {
             for-each("@*") {
-                value-of(select="concat(name(), '=\"', ., '\", ')");
+                value-of("concat(name(), '=\"', ., '\", ')");
             }
         }
 
         // Delete the last comma
         if("string-length($attributes) > 0") {
-            value-of(select="substring($attributes, 0, string-length($attributes) - 1)");
+            value-of("substring($attributes, 0, string-length($attributes) - 1)");
         }
     }
     
     // Template for comments
-    template(match="comment()") {
-    }
+    template(match="comment()");
 }
