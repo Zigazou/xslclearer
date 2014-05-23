@@ -93,6 +93,28 @@ It works for the following tags (attribute) :
 * strip-space (elements),
 * text (disable-output-escaping).
 
+Though they may have more than one attribute, it also works for the following
+tags (attribute) :
+
+* value-of (select),
+* apply-templates (select),
+* template (name),
+* attribute (name).
+
+In this case, the argument must be given at the very first position.
+
+Example :
+
+    template("template-name", match="*") {
+        ...
+    }
+
+translates into :
+
+    <xsl:template name="template-name" match="*">
+        ...
+    </xsl:template>
+
 ### Tag and attribute verification ###
 
 The compiler verifies that identifiers are from the XSL or XSL-FO tags lists.
