@@ -48,7 +48,7 @@
 
                 <!-- Strings -->
                 <context id="string" style-ref="string" end-at-line-end="false">
-                    <start>"</start>
+                    <start>[#]?"</start>
                     <end>"</end>
                     <include>
                         <context id="escaped-character1" style-ref="escaped-character">

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """XSLSTokenizer is the lexical analyzer of xslclearer."""
 
-import re
+from .tokenizer_exception import (
+    UnexpectedCharacter,
+    InvalidSelector,
+    UnableToConvertCSSSelector
+)
 
-class TokenizerException(Exception):
-    """Exception generated when the Tokenizer is unable to identify a token"""
-    def __init__(self, offset):
-        self.offset = offset
-        self.message = 'unexpected character'
-        Exception.__init__(self, self.message)
+import re
+from .css_to_xpath import PatchedTranslator
 
 class Tokenizer:
     """Tokenizer for .xsls files"""
@@ -31,7 +31,7 @@ class Tokenizer:
             for name, regexp in [
                 ('identifier', name_start_char + name_char + '*'),
                 ('variable', '\\$' + name_start_char + name_char + '*'),
-                ('string', '"(\\\\"|\\\\\\\\|[^"])*"'),
+                ('string', '[#]?"(\\\\"|\\\\\\\\|[^"])*"'),
                 ('semicolon', ';'),
                 ('comma', ','),
                 ('paropen', '[(]'),
@@ -50,6 +50,29 @@ class Tokenizer:
             '|'.join(token_patterns),
             re.VERBOSE | re.UNICODE
         )
+
+    def _preprocess(self, token_name, token_value, position):
+        if token_name == 'string':
+            # Unescapes string
+            token_value = token_value.replace('\\\\', '\\')
+            token_value = token_value.replace('\\"', '"')
+            
+            if token_value[0] == '#':
+                token_value = token_value[2:-1]
+
+                token_value = PatchedTranslator(position).css_to_xpath(
+                    token_value,
+                    prefix='//'
+                )
+                    
+            else:
+                token_value = token_value[1:-1]
+        elif token_name == 'variable':
+            # Remove the preceding $
+            token_value = token_value[1:]
+
+        return token_value
+  
 
     def tokenize(self, text, skip=None):
         """Tokenizes .xsls files
@@ -74,10 +97,14 @@ class Tokenizer:
 
             position = match.end()
             token_name = match.lastgroup
-            token_value = match.group(token_name)
+            token_value = self._preprocess(
+                token_name,
+                match.group(token_name),
+                position
+            )
 
             if not token_name in skip:
                 yield token_name, token_value, position
 
         if position != len(text):
-            raise TokenizerException(position)
+            raise UnexpectedCharacter(position)

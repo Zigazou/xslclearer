@@ -94,6 +94,7 @@ class Compiler:
             )
 
         self.current_pos += 1
+        
         return self.tokens[self.current_pos - 1]
 
     def _read_program(self):
@@ -154,21 +155,6 @@ class Compiler:
 
         return (namespace, instruction)
 
-    def _guess_parameter_name(self, instruction, params):
-        """Guess the name of the attribute for a string as unique parameter"""
-        if len(params) >= 1 and params[0] == '"':
-            if instruction in XSLT_TAGS_ONE_ATTRIBUTE:
-                attribute = XSLT_TAGS_ONE_ATTRIBUTE[instruction]
-            else:
-                raise UnknownAttribute(self._next_offset(), params)
-
-            params = '{attribute}={value}'.format(
-                attribute=attribute,
-                value=params
-            )
-
-        return params
-
     def _read_defparam(self, namespace, instruction):
         """Read a param of defparam"""
         outputs = []
@@ -179,7 +165,7 @@ class Compiler:
                 output = '<{nmspc}:{inst} name="{name}"/>'.format(
                     nmspc=namespace,
                     inst=instruction,
-                    name=variable[1:]
+                    name=variable
                 )
                 
                 outputs.append(output)
@@ -195,8 +181,8 @@ class Compiler:
                 output = '<{ns}:{ins} name="{nm}" select="{sl}"/>'.format(
                     ns=namespace,
                     ins=instruction,
-                    nm=variable[1:],
-                    sl=value[1:-1]
+                    nm=variable,
+                    sl=xml_escape_string(value)
                 )
 
                 outputs.append(output)
@@ -211,7 +197,7 @@ class Compiler:
 
                 output = '<{ns}:{ins} name="{nm}">{prg}</{ns}:{ins}>'.format(
                     ns=namespace,
-                    nm=variable[1:],
+                    nm=variable,
                     prg=self._read_program(),
                     ins=instruction,
                 )
@@ -241,8 +227,12 @@ class Compiler:
         if instruction in ['param', 'with-param']:
             return self._read_defparam(namespace, instruction)
 
-        params = self._read_parameters()
-        params = self._guess_parameter_name(instruction, params)
+        if instruction in XSLT_TAGS_ONE_ATTRIBUTE:
+            default = XSLT_TAGS_ONE_ATTRIBUTE[instruction]
+        else:
+            default = ''
+
+        params = self._read_parameters(default)
 
         # Generate the XML tags
         if self._next_token_is('semicolon'):
@@ -276,17 +266,14 @@ class Compiler:
         """Read an affectation"""
         _, variable, _ = self._consume('variable')
         
-        # Remove $ from the beginning
-        variable = variable[1:]
-
         self._consume('equals')
 
         if self._next_token_is('string'):
             _, value, _ = self._consume('string')
             self._consume('semicolon')
-            return '<xsl:variable name="{variable}" select={value} />'.format(
-                variable=variable,
-                value=value
+            return '<xsl:variable name="{var}" select="{value}" />'.format(
+                var=variable,
+                value=xml_escape_string(value)
             )
         elif self._next_token_is('curopen'):
             self._consume('curopen')
@@ -306,40 +293,37 @@ class Compiler:
                 'string or curly brace'
             )
 
-    def _read_parameters(self):
+    def _read_parameters(self, default):
         """Read a parameter list"""
         self._consume('paropen')
 
-        if self._next_token_is('string'):
-            _, output, _ = self._consume('string')
-            output = xml_escape_string(output)
+        output = ''
+
+        while not self._next_token_is('parclose'):
+            output += self._read_parameter(default)
 
             if self._next_token_is('comma'):
                 self._consume('comma')
-        else:
-            output = ''
-
-        while self._next_token_is('identifier'):
-            output += self._read_parameter()
 
         self._consume('parclose')
 
         return output
 
-    def _read_parameter(self):
+    def _read_parameter(self, default):
         """Read a parameter"""
-        _, parameter, _ = self._consume('identifier')
+        
+        if self._next_token_is('string'):
+            parameter = default
+        else:    
+            _, parameter, _ = self._consume('identifier')
+            self._consume('equals')
 
         if ':' not in parameter and parameter not in XSL_ALL_ATTRIBUTES:
             raise UnknownAttribute(self._next_offset(), parameter)
 
-        self._consume('equals')
         _, value, _ = self._consume('string')
 
-        if self._next_token_is('comma'):
-            self._consume('comma')
-
-        return '{parameter}={value} '.format(
+        return '{parameter}="{value}" '.format(
             parameter=parameter,
             value=xml_escape_string(value)
         )
