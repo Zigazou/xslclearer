@@ -31,8 +31,7 @@ def xml_escape_string(text):
         ("&", "&amp;"),
         ("<", "&lt;"),
         (">", "&gt;"),
-        (r'\"', "&quot;"),
-        (r'\\', '\\')
+        ('"', "&quot;")
     ))
 
 class Compiler:

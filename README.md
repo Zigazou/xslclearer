@@ -14,7 +14,7 @@ Documentation
 
 ### Tags ###
 
-The xsls format converts :
+The xsls format converts:
 
     tag(attribute="value", attribute="value") {
         tag(attribute="value", attribute="value");
@@ -44,7 +44,7 @@ the back-slash.
 
 ### Variables ###
 
-The xsls format converts :
+The xsls format converts:
 
     $variable = "string";
 
@@ -52,7 +52,7 @@ into
 
     <xsl:variable name="variable" select="string" />
     
-The xsls format converts :
+The xsls format converts:
 
     $variable = {
         instructions
@@ -64,9 +64,40 @@ into
         instructions
     </xsl:variable>
 
+### Strings ###
+
+Strings are enclosed with double quotes ("). It accepts \ as an escaping
+character (\\ to insert \, \" to insert " inside a string).
+
+Special XML characters are automatically escaped.
+
+Example:
+
+    "string-length(\"abc\") > 2"
+
+translates into:
+
+    "string-length(&amp;quot;abc&amp;quot;) &amp;gt; 2"
+
+### CSS selector strings ###
+
+Strings can contain CSS selector if they are directly preceded by a #.
+
+Example:
+
+    #"ns|tag ns|tag#identifier"
+
+translates into:
+
+    "//ns:tag//ns:tag[@id='identifier']"
+
+It uses the **cssselect** Python module to do the conversion.
+
+If this module is missing, xslclearer raises an exception.
+
 ### Tags with only one attribute ###
 
-The xsls format converts :
+The xsls format converts:
 
     call-template("string") {
         instructions
@@ -78,7 +109,7 @@ into
         instructions
     </xsl:call-template>
 
-It works for the following tags (attribute) :
+It works for the following tags (attribute):
 
 * when (test),
 * if (test),
@@ -94,7 +125,7 @@ It works for the following tags (attribute) :
 * text (disable-output-escaping).
 
 Though they may have more than one attribute, it also works for the following
-tags (attribute) :
+tags (attribute):
 
 * value-of (select),
 * apply-templates (select),
@@ -103,13 +134,13 @@ tags (attribute) :
 
 In this case, the argument must be given at the very first position.
 
-Example :
+Example:
 
     template("template-name", match="*") {
         ...
     }
 
-translates into :
+translates into:
 
     <xsl:template name="template-name" match="*">
         ...
