@@ -77,7 +77,7 @@ Example:
 
 translates into:
 
-    "string-length(&amp;quot;abc&amp;quot;) &amp;gt; 2"
+    "string-length(&quot;abc&quot;) &gt; 2"
 
 ### CSS selector strings ###
 
