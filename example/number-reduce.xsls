@@ -1,0 +1,108 @@
+stylesheet(version="1.0", xmlns:xsl="http://www.w3.org/1999/XSL/Transform") {
+
+    output(method="xml", indent="no", encoding="utf-8");
+
+    // Read the first number from a string
+    // If the string does not start with a digit or a point, it returns
+    // an empty string.
+    // It is a recursive template.
+    // Examples:
+    // - "0.1234 4567" → "0.1234"
+    // - " 1234" → ""
+    template("read-number") {
+        param $string;
+
+        $first = "substring($string, 1, 1)";
+        $digit = "translate($first, '0123456789.', '00000000000')";
+
+        if("$digit = '0'") {
+            value-of("$first");
+            call-template("read-number") {
+                with-param $string="substring($string, 2)";
+            }
+        }
+    }
+
+    // Reduce precision of a number contained in a string
+    // The string must be a number returned by the read-number template
+    // Precision gives the number of decimals to keep
+    // Examples:
+    // - "123.456789", 3 → "123.456"
+    // - "1234", 3 → "1234"
+    template("reduce-number") {
+        param $string, $precision;
+
+        choose() {
+            when("contains($string, '.')") {
+                value-of("substring-before($string, '.')");
+                [.]
+                value-of("substring(substring-after($string, '.'), 1, $precision)");
+            }
+
+            otherwise() {
+                value-of("$string");
+            }
+        }
+    }
+
+    // Reduce precision of a list of numbers contained in a string
+    // It is a recursive template.
+    // Examples:
+    // - "1.23456, 2.468012, 0", 3 → "1.234, 2.468, 0"
+    template("reduce-numbers") {
+        param $string, $precision;
+
+        // Tries to read a number from the string
+        $number = {
+            call-template("read-number") {
+                with-param $string="$string";
+            }
+        }
+        
+        choose() {
+            // A number has been found
+            when("string-length($number) > 0") {
+                // Reduce the number and send it to output
+                call-template("reduce-number") {
+                    with-param $string="$number", $precision="$precision";
+                }
+
+                // Go on with the remaining of the string
+                call-template("reduce-numbers") {
+                    with-param $string="substring-after($string, $number)",
+                               $precision="$precision";
+                }
+            }
+
+            // A character not being a number has been found
+            when("string-length($string) > 0") {
+                // Send the first character to output
+                value-of("substring($string, 1, 1)");
+
+                // Go on with the remaining of the string
+                call-template("reduce-numbers") {
+                    with-param $string="substring($string, 2)",
+                               $precision="$precision";
+                }
+            }
+
+            // Nothing’s left
+            otherwise();
+        }
+    }
+
+    template(match="document") {
+        copy() {
+            apply-templates();
+        }
+    }
+
+    template(match="numbers") {
+        copy() {
+            call-template("reduce-numbers") {
+                with-param $string="text()", $precision="3";
+            }
+        }
+    }
+}
+
