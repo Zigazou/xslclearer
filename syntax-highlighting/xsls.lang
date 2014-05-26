@@ -70,56 +70,6 @@
 
                 <!-- Keywords -->
                 <context id="statements" style-ref="statement" class="statement">
-                    <keyword>analyze-string</keyword>
-                    <keyword>apply-imports</keyword>
-                    <keyword>apply-templates</keyword>
-                    <keyword>attribute</keyword>
-                    <keyword>attribute-set</keyword>
-                    <keyword>call-template</keyword>
-                    <keyword>character-map</keyword>
-                    <keyword>choose</keyword>
-                    <keyword>comment</keyword>
-                    <keyword>copy</keyword>
-                    <keyword>copy-of</keyword>
-                    <keyword>decimal-format</keyword>
-                    <keyword>document</keyword>
-                    <keyword>element</keyword>
-                    <keyword>fallback</keyword>
-                    <keyword>for-each</keyword>
-                    <keyword>for-each-group</keyword>
-                    <keyword>function</keyword>
-                    <keyword>if</keyword>
-                    <keyword>import</keyword>
-                    <keyword>import-schema</keyword>
-                    <keyword>include</keyword>
-                    <keyword>key</keyword>
-                    <keyword>matching-substring</keyword>
-                    <keyword>message</keyword>
-                    <keyword>namespace</keyword>
-                    <keyword>namespace-alias</keyword>
-                    <keyword>next-match</keyword>
-                    <keyword>non-matching-substring</keyword>
-                    <keyword>number</keyword>
-                    <keyword>otherwise</keyword>
-                    <keyword>output</keyword>
-                    <keyword>output-character</keyword>
-                    <keyword>param</keyword>
-                    <keyword>perform-sort</keyword>
-                    <keyword>preserve-space</keyword>
-                    <keyword>processing-instruction</keyword>
-                    <keyword>result-document</keyword>
-                    <keyword>sequence</keyword>
-                    <keyword>sort</keyword>
-                    <keyword>strip-space</keyword>
-                    <keyword>stylesheet</keyword>
-                    <keyword>template</keyword>
-                    <keyword>text</keyword>
-                    <keyword>transform</keyword>
-                    <keyword>value-of</keyword>
-                    <keyword>variable</keyword>
-                    <keyword>when</keyword>
-                    <keyword>with-param</keyword>
-
                     <keyword>root</keyword>
                     <keyword>declarations</keyword>
                     <keyword>color-profile</keyword>
@@ -201,6 +151,84 @@
                     <keyword>marker</keyword>
                     <keyword>retrieve-marker</keyword>
                     <keyword>retrieve-table-marker</keyword>
+
+                    <keyword>accept</keyword>
+                    <keyword>accumulator</keyword>
+                    <keyword>accumulator-rule</keyword>
+                    <keyword>analyze-string</keyword>
+                    <keyword>apply-imports</keyword>
+                    <keyword>apply-templates</keyword>
+                    <keyword>assert</keyword>
+                    <keyword>attribute</keyword>
+                    <keyword>attribute-set</keyword>
+                    <keyword>break</keyword>
+                    <keyword>call-template</keyword>
+                    <keyword>catch</keyword>
+                    <keyword>character-map</keyword>
+                    <keyword>choose</keyword>
+                    <keyword>comment</keyword>
+                    <keyword>context-item</keyword>
+                    <keyword>copy</keyword>
+                    <keyword>copy-of</keyword>
+                    <keyword>decimal-format</keyword>
+                    <keyword>declaration</keyword>
+                    <keyword>document</keyword>
+                    <keyword>element</keyword>
+                    <keyword>evaluate</keyword>
+                    <keyword>expose</keyword>
+                    <keyword>fallback</keyword>
+                    <keyword>for-each</keyword>
+                    <keyword>for-each-group</keyword>
+                    <keyword>fork</keyword>
+                    <keyword>function</keyword>
+                    <keyword>if</keyword>
+                    <keyword>import</keyword>
+                    <keyword>import-schema</keyword>
+                    <keyword>include</keyword>
+                    <keyword>instruction</keyword>
+                    <keyword>iterate</keyword>
+                    <keyword>key</keyword>
+                    <keyword>literal-result-element</keyword>
+                    <keyword>map</keyword>
+                    <keyword>map-entry</keyword>
+                    <keyword>matching-substring</keyword>
+                    <keyword>merge</keyword>
+                    <keyword>merge-action</keyword>
+                    <keyword>merge-key</keyword>
+                    <keyword>merge-source</keyword>
+                    <keyword>message</keyword>
+                    <keyword>mode</keyword>
+                    <keyword>namespace</keyword>
+                    <keyword>namespace-alias</keyword>
+                    <keyword>next-iteration</keyword>
+                    <keyword>next-match</keyword>
+                    <keyword>non-matching-substring</keyword>
+                    <keyword>number</keyword>
+                    <keyword>on-completion</keyword>
+                    <keyword>otherwise</keyword>
+                    <keyword>output</keyword>
+                    <keyword>output-character</keyword>
+                    <keyword>override</keyword>
+                    <keyword>package</keyword>
+                    <keyword>param</keyword>
+                    <keyword>perform-sort</keyword>
+                    <keyword>preserve-space</keyword>
+                    <keyword>processing-instruction</keyword>
+                    <keyword>result-document</keyword>
+                    <keyword>sequence</keyword>
+                    <keyword>sort</keyword>
+                    <keyword>stream</keyword>
+                    <keyword>strip-space</keyword>
+                    <keyword>stylesheet</keyword>
+                    <keyword>template</keyword>
+                    <keyword>text</keyword>
+                    <keyword>transform</keyword>
+                    <keyword>try</keyword>
+                    <keyword>use-package</keyword>
+                    <keyword>value-of</keyword>
+                    <keyword>variable</keyword>
+                    <keyword>when</keyword>
+                    <keyword>with-param</keyword>
                 </context>
 
                 <context id="attributes" style-ref="attribute" class="attribute">
@@ -485,27 +513,66 @@
                     <keyword>vertical-align</keyword>
                     <keyword>white-space</keyword>
                     <keyword>xml:lang</keyword>
+
+                    <keyword>xmlns</keyword>
+
+                    <keyword>as</keyword>
+                    <keyword>base-uri</keyword>
+                    <keyword>bind-group</keyword>
+                    <keyword>bind-grouping-key</keyword>
+                    <keyword>bind-key</keyword>
+                    <keyword>bind-source</keyword>
+                    <keyword>byte-order-mark</keyword>
+                    <keyword>cache</keyword>
                     <keyword>case-order</keyword>
                     <keyword>cdata-section-elements</keyword>
+                    <keyword>character</keyword>
+                    <keyword>collation</keyword>
+                    <keyword>component</keyword>
+                    <keyword>composite</keyword>
+                    <keyword>context-item</keyword>
+                    <keyword>copy-namespaces</keyword>
                     <keyword>count</keyword>
                     <keyword>data-type</keyword>
                     <keyword>decimal-separator</keyword>
+                    <keyword>default-collation</keyword>
+                    <keyword>default-mode</keyword>
+                    <keyword>default-validation</keyword>
                     <keyword>digit</keyword>
                     <keyword>disable-output-escaping</keyword>
                     <keyword>doctype-public</keyword>
                     <keyword>doctype-system</keyword>
                     <keyword>elements</keyword>
                     <keyword>encoding</keyword>
+                    <keyword>error-code</keyword>
+                    <keyword>errors</keyword>
+                    <keyword>escape-uri-attributes</keyword>
                     <keyword>exclude-result-prefixes</keyword>
+                    <keyword>expand-text</keyword>
                     <keyword>extension-element-prefixes</keyword>
+                    <keyword>flags</keyword>
+                    <keyword>for-each</keyword>
                     <keyword>format</keyword>
                     <keyword>from</keyword>
+                    <keyword>group-adjacent</keyword>
+                    <keyword>group-by</keyword>
+                    <keyword>group-ending-with</keyword>
                     <keyword>grouping-separator</keyword>
                     <keyword>grouping-size</keyword>
+                    <keyword>group-starting-with</keyword>
                     <keyword>href</keyword>
+                    <keyword>html-version</keyword>
                     <keyword>id</keyword>
+                    <keyword>identity-sensitive</keyword>
+                    <keyword>include-content-type</keyword>
                     <keyword>indent</keyword>
                     <keyword>infinity</keyword>
+                    <keyword>inherit-namespaces</keyword>
+                    <keyword>initial</keyword>
+                    <keyword>initial-value</keyword>
+                    <keyword>input-type-annotations</keyword>
+                    <keyword>item-separator</keyword>
+                    <keyword>key</keyword>
                     <keyword>lang</keyword>
                     <keyword>letter-value</keyword>
                     <keyword>level</keyword>
@@ -515,27 +582,68 @@
                     <keyword>minus-sign</keyword>
                     <keyword>mode</keyword>
                     <keyword>name</keyword>
+                    <keyword>names</keyword>
                     <keyword>namespace</keyword>
+                    <keyword>namespace-context</keyword>
                     <keyword>NaN</keyword>
+                    <keyword>new-value</keyword>
+                    <keyword>normalization-form</keyword>
                     <keyword>omit-xml-declaration</keyword>
+                    <keyword>on-empty</keyword>
+                    <keyword>on-multiple-match</keyword>
+                    <keyword>on-no-match</keyword>
                     <keyword>order</keyword>
+                    <keyword>ordinal</keyword>
+                    <keyword>output-version</keyword>
+                    <keyword>override</keyword>
+                    <keyword>override-extension-function</keyword>
+                    <keyword>package-version</keyword>
+                    <keyword>parameter-document</keyword>
                     <keyword>pattern-separator</keyword>
-                    <keyword>per-mille</keyword>
                     <keyword>percent</keyword>
+                    <keyword>per-mille</keyword>
+                    <keyword>phase</keyword>
+                    <keyword>post-descent</keyword>
                     <keyword>priority</keyword>
+                    <keyword>regex</keyword>
+                    <keyword>required</keyword>
                     <keyword>result-prefix</keyword>
+                    <keyword>schema-aware</keyword>
+                    <keyword>schema-location</keyword>
                     <keyword>select</keyword>
+                    <keyword>separator</keyword>
+                    <keyword>sort-before-merge</keyword>
+                    <keyword>stable</keyword>
                     <keyword>standalone</keyword>
+                    <keyword>start-at</keyword>
+                    <keyword>static</keyword>
+                    <keyword>streamable</keyword>
+                    <keyword>string</keyword>
                     <keyword>stylesheet-prefix</keyword>
+                    <keyword>suppress-indentation</keyword>
                     <keyword>terminate</keyword>
                     <keyword>test</keyword>
+                    <keyword>tunnel</keyword>
+                    <keyword>type</keyword>
+                    <keyword>typed</keyword>
+                    <keyword>undeclare-prefixes</keyword>
                     <keyword>use</keyword>
                     <keyword>use-attribute-sets</keyword>
+                    <keyword>use-character-maps</keyword>
+                    <keyword>use-when</keyword>
+                    <keyword>validation</keyword>
                     <keyword>value</keyword>
                     <keyword>version</keyword>
+                    <keyword>visibility</keyword>
+                    <keyword>warning-on-multiple-match</keyword>
+                    <keyword>warning-on-no-match</keyword>
+                    <keyword>with-params</keyword>
+                    <keyword>xpath</keyword>
+                    <keyword>xpath-default-namespace</keyword>
+                    <keyword>zero-digit</keyword>
+
                     <keyword>xml:space</keyword>
                     <keyword>xmlns:xsl</keyword>
-                    <keyword>zero-digit</keyword>
                 </context>
             </include>
         </context>
