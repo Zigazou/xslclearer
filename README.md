@@ -36,6 +36,11 @@ into
         </xsl:tag>
     </xsl:tag>
 
+XSLClearer recognizes tags and attributes up to XSLT 3.0. A tag/attribute
+without a preceding namespace must be and XSLT 3.0 or XSLT-FO tag/attribute.
+It otherwise throw an error. If there is a preceding namespace, no check is
+done.
+
 If you need to use a closing bracket inside the [ ], you may escape it using
 the back-slash.
 
