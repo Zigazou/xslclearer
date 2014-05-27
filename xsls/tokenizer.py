@@ -38,7 +38,7 @@ class Tokenizer:
                 ('parclose', '[)]'),
                 ('curopen', '{'),
                 ('curclose', '}'),
-                ('inplace', '\\[(\\\\]|\\\\\\\\|[^\\]])*\\]'),
+                ('inplace', '[#]?\\[(\\\\]|\\\\\\\\|[^\\]])*\\]'),
                 ('newline', '\\r\\n|\\n|\\r'),
                 ('whitespace', '\\s+'),
                 ('equals', '='),
@@ -70,6 +70,19 @@ class Tokenizer:
         elif token_name == 'variable':
             # Remove the preceding $
             token_value = token_value[1:]
+        elif token_name == 'inplace':
+            token_value = token_value.replace(r'\]', ']')
+            token_value = token_value.replace(r'\\', '\\')
+
+            if token_value[0] == '#':
+                token_value = token_value[2:-1]
+                token_value = '{start}{value}{end}'.format(
+                    start='<text xml:space="preserve">',
+                    value=token_value,
+                    end='</text>'
+                )
+            else:
+                token_value = token_value[1:-1]
 
         return token_value
   

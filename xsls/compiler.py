@@ -130,10 +130,7 @@ class Compiler:
         """Read inplace"""
         _, inplace, _ = self._consume('inplace')
         
-        return multiple_replace(inplace[1:-1], (
-            (r'\]', ']'),
-            (r'\\', '\\')
-        ))
+        return inplace
 
     def _cut_namespace(self, instruction):
         """Guess the namespace for the given instruction"""
