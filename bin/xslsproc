@@ -4,7 +4,7 @@ from subprocess import call
 import sys
 import os
 import tempfile
-import xslclearer
+from xsls import xslclearer
 
 def main():
     # Copy the parameters without the command name
