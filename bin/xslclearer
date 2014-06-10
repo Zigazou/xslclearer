@@ -2,7 +2,7 @@
 """xslclearer compile .xsls files into .xslt files"""
 
 import sys
-from xsls/xslclearer import xsls_compile
+from xsls.xslclearer import xsls_compile
 
 def main():
     """Interface between the operating system and the compiler"""
