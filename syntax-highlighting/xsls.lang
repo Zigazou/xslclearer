@@ -51,7 +51,7 @@
                     <start>[#]?"</start>
                     <end>"</end>
                     <include>
-                        <context id="escaped-character1" style-ref="escaped-character">
+                        <context id="escaped-character1">
                             <match>\\[\\"]</match>
                         </context>
                     </include>
@@ -62,7 +62,7 @@
                     <start>\[</start>
                     <end>\]</end>
                     <include>
-                        <context id="escaped-character2" style-ref="escaped-character">
+                        <context id="escaped-character2">
                             <match>\\[\\\]]</match>
                         </context>
                     </include>
@@ -229,6 +229,9 @@
                     <keyword>variable</keyword>
                     <keyword>when</keyword>
                     <keyword>with-param</keyword>
+                    
+                    <!-- Specific XSLS tags -->
+                    <keyword>match(?=\s*[(])</keyword>
                 </context>
 
                 <context id="attributes" style-ref="attribute" class="attribute">

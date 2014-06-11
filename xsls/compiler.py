@@ -11,12 +11,14 @@ from .compiler_exception import (
 
 from .keywords.xslt_attributes import XSLT_ATTRIBUTES
 from .keywords.xslt_tags import XSLT_TAGS
+from .keywords.xsls_tags import XSLS_TAGS
 from .keywords.xslt_tags_one_attribute import XSLT_TAGS_ONE_ATTRIBUTE
 from .keywords.xsl_fo_attributes import XSL_FO_ATTRIBUTES
 from .keywords.xsl_fo_tags import XSL_FO_TAGS
 from .keywords.xml_attributes import XML_ATTRIBUTES
+from .keywords.xsls_to_xslt_tags import XSLS_TO_XSLT_TAGS
 
-XSL_ALL_TAGS = XSLT_TAGS + XSL_FO_TAGS
+XSL_ALL_TAGS = XSLT_TAGS + XSL_FO_TAGS + XSLS_TAGS
 XSL_ALL_ATTRIBUTES = XSLT_ATTRIBUTES + XSL_FO_ATTRIBUTES + XML_ATTRIBUTES
 
 def multiple_replace(text, replaces):
@@ -144,7 +146,7 @@ class Compiler:
                     instruction
                 )
 
-            if instruction in XSLT_TAGS:
+            if instruction in XSLT_TAGS or instruction in XSLS_TAGS:
                 namespace = 'xsl'
             else:
                 namespace = 'fo'
@@ -227,6 +229,9 @@ class Compiler:
             default = XSLT_TAGS_ONE_ATTRIBUTE[instruction]
         else:
             default = ''
+
+        if instruction in XSLS_TAGS:
+            instruction = XSLS_TO_XSLT_TAGS[instruction]
 
         params = self._read_parameters(default)
 

@@ -6,5 +6,7 @@ __all__ = [
     "xsl_fo_attributes",
     "xslt_tags",
     "xslt_attributes",
-    "xml_attributes"
+    "xml_attributes",
+    "xsls_tags",
+    "xsls_to_xslt_tags",
 ]

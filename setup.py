@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='XSLClearer',
-    version='0.1.1',
+    version='0.1.3',
     author='Frédéric BISSON',
     author_email='zigazou@free.fr',
     packages=['xsls', 'xsls/keywords'],

@@ -17,6 +17,7 @@ XSLT_TAGS_ONE_ATTRIBUTE = {
     'value-of': 'select',
     'apply-templates': 'select',
     'template': 'name',
-    'attribute': 'name'
+    'attribute': 'name',
+    'match': 'match',
 }
 
