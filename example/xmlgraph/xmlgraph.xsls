@@ -1,0 +1,99 @@
+// XML graph
+
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 3 of the License, or (at your option)
+// any later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+// more details.
+//
+// You should have received a copy of the GNU General Public License along
+// with this program. If not, see http://www.gnu.org/licenses/. 
+
+stylesheet(
+    version="1.0",
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform",
+    xml:space="preserve"
+) {
+    output(method="text", encoding="utf-8");
+
+    // This parameter can be defined outside of this stylesheet
+    param $showattribute = "'false'";
+
+    // Create a dot node given the parent id, child id, label and shape
+    template("create-node") {
+        param $parent, $child, $label, $shape;
+
+        [  ] value-of("$child"); [[]
+            [label="] value-of("$label"); [" ]
+            [shape=] value-of("$shape");
+        [\];&#10;]
+
+        // Under XSLTProc, generate-id of nothing gives idp0
+        if("$parent != 'idp0'") {
+            [  ] value-of("$parent"); [ -> ] value-of("$child"); [;&#10;]
+        }
+    }
+
+    // Root of the XML tree
+    match("/") {
+        [digraph MyGraph {&#10;]
+        [graph [rankdir=LR, splines=polyline, nodesep=0.10\];&#10;]
+        apply-templates("@*|node()");
+        [}]
+    }
+
+    // Each tag will be represented by a text inside a rectangle
+    match("node()") {
+        $nodelabel = {
+            choose() {
+                // Show the number of attribute after the tag name
+                when("count(@*) > 0 and $showattribute = 'false'") {
+                    value-of("concat(name(), ' (',count(@*),')')");
+                }
+                otherwise() {
+                    value-of("name()");
+                }
+            }
+        }
+
+        call-template("create-node") {
+            with-param $parent = "generate-id(..)", $child = "generate-id(.)",
+                       $label  = "$nodelabel"     , $shape = "'rect'";
+        }
+        apply-templates("@*|node()");
+    }
+
+    // Template for attributes
+    match("@*") {
+        if("$showattribute = 'true'") {
+            call-template("create-node") {
+                with-param $parent = "generate-id(..)", $child = "generate-id(.)",
+                           $label  = "name()"         , $shape = "'oval'";
+            }
+        }
+    }
+
+    // Template for comments
+    match("comment()") {
+        call-template("create-node") {
+            with-param $parent = "generate-id(..)", $child = "generate-id(.)",
+                       $label  = "'comment'"      , $shape = "'plaintext'";
+        }
+    }
+
+    // Output beginning of texts only if it really contains text
+    match("text()[normalize-space(.) != '']") {
+        call-template("create-node") {
+            with-param $parent = "generate-id(..)", $child  = "generate-id(.)",
+                       $label  = "substring(., 1, 10)",
+                       $shape  = "'plaintext'";
+        }
+    }
+
+    match("text()");
+}
+

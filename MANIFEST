@@ -17,6 +17,8 @@ xsls/keywords/__init__.py
 xsls/keywords/xml_attributes.py
 xsls/keywords/xsl_fo_attributes.py
 xsls/keywords/xsl_fo_tags.py
+xsls/keywords/xsls_tags.py
+xsls/keywords/xsls_to_xslt_tags.py
 xsls/keywords/xslt_attributes.py
 xsls/keywords/xslt_tags.py
 xsls/keywords/xslt_tags_one_attribute.py

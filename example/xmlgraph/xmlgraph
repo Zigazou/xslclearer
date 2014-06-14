@@ -1,0 +1,95 @@
+#!/bin/bash
+usage="$(basename "$0") [-h] [-a] [files] -- create a graph of an XML file
+
+DESCRIPTION
+    This script will take one or more XML files and generate a PNG file for
+    each of them displaying their XML tree.
+
+    The generated PNG filename is the XML filename followed by '.png'.
+
+    Tags are shown in rectangle shapes. Non-empty text is shown in plain text
+    (only the first ten characters).
+
+    If -a option is given, the generated file will show attributes in oval
+    shapes.
+
+    It serves as an example for the XSLClearer utilities.
+
+OPTIONS
+    -h     show this help text
+    -a     show attributes in the graph (default: don't show)
+    files  a list of files for which you want to create a graph in PNG format
+
+REQUIREMENTS
+    xslsproc -- which comes from XSLClearer
+    xsltproc -- a standard XSLT processor
+    dot -- which comes from the GraphViz utilities
+
+LIMITS
+    An XML tree may be too big to render. This script is useful only for small
+    XML or educational purposes.
+
+    This script does not work with standard input.
+
+AUTHOR
+    Frédéric Bisson <zigazou@free.fr>
+
+COPYRIGHT
+    © 2014 Frédéric Bisson
+
+    This program is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the Free
+    Software Foundation; either version 3 of the License, or (at your option)
+    any later version.
+
+    This program is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+    more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program. If not, see http://www.gnu.org/licenses/. 
+"
+
+# Parse options
+showattribute='false'
+while getopts "ah" option
+do
+    case $option in
+        a) showattribute='true'; shift;;
+        h) echo "$usage" >&2; exit 1;;
+    esac
+done
+
+# Checks for programs availability
+for command in xslsproc xsltproc dot
+do
+    which "$command" > /dev/null && continue
+    echo "$command unavailable" >&2
+    exit
+done
+
+# Get full path to the xmlgraph.xsls file
+stylesheet="$(readlink -f -- $(dirname "$0"))/xmlgraph.xsls"
+if [ ! -r "$stylesheet" ]
+then
+    echo "xmlgraph.xsls not found" >&2
+    exit
+fi
+
+# Create an XML graph for each file
+while [ -n "$1" ]
+do
+    xmlfile="$1"
+    pngfile="$xmlfile.png"
+
+    # Create the XML graph
+    xslsproc --stringparam showattribute "$showattribute" \
+             "$stylesheet" \
+             "$xmlfile" \
+    | dot -Tpng > "$pngfile"
+
+    # Next file
+    shift
+done
+
