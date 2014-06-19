@@ -1,0 +1,170 @@
+- Default style (graphic)
+  - Graphic properties
+    - stroke-color: #808080
+    - fill-color: #cfe7f5
+    - wrap-option: no-wrap
+    - shadow-offset-x: 0.3cm
+    - shadow-offset-y: 0.3cm
+    - start-line-spacing-horizontal: 0.283cm
+    - start-line-spacing-vertical: 0.283cm
+    - end-line-spacing-horizontal: 0.283cm
+    - end-line-spacing-vertical: 0.283cm
+    - flow-with-text: false
+  - Paragraph properties
+    - text-autospace: ideograph-alpha
+    - line-break: strict
+    - writing-mode: lr-tb
+    - font-independent-line-spacing: false
+  - Text properties
+    - use-window-font-color: true
+    - font-size: 12pt
+    - language: fr
+    - country: FR
+    - letter-kerning: true
+    - font-size-asian: 10.5pt
+    - language-asian: zh
+    - country-asian: CN
+    - font-size-complex: 12pt
+    - language-complex: hi
+    - country-complex: IN
+- Default style (paragraph)
+  - Paragraph properties
+    - hyphenation-ladder-count: no-limit
+    - text-autospace: ideograph-alpha
+    - punctuation-wrap: hanging
+    - line-break: strict
+    - tab-stop-distance: 1.251cm
+    - writing-mode: page
+  - Text properties
+    - use-window-font-color: true
+    - font-name: Times New Roman
+    - font-size: 12pt
+    - language: fr
+    - country: FR
+    - letter-kerning: true
+    - font-name-asian: WenQuanYi Zen Hei
+    - font-size-asian: 10.5pt
+    - language-asian: zh
+    - country-asian: CN
+    - font-name-complex: Lohit Hindi
+    - font-size-complex: 12pt
+    - language-complex: hi
+    - country-complex: IN
+    - hyphenate: false
+    - hyphenation-remain-char-count: 2
+    - hyphenation-push-char-count: 2
+- Default style (table)
+- Default style (table-row)
+- (Standard)
+  - family: paragraph
+  - class: text
+- (Heading)
+  - family: paragraph
+  - parent-style-name: Standard
+  - next-style-name: Text_20_body
+  - class: text
+  - Paragraph properties
+    - margin-top: 0.423cm
+    - margin-bottom: 0.212cm
+    - keep-with-next: always
+  - Text properties
+    - font-name: Arial
+    - font-size: 14pt
+    - font-name-asian: WenQuanYi Zen Hei
+    - font-size-asian: 14pt
+    - font-name-complex: Lohit Hindi
+    - font-size-complex: 14pt
+- Text body (Text_20_body)
+  - family: paragraph
+  - parent-style-name: Standard
+  - class: text
+  - Paragraph properties
+    - margin-top: 0cm
+    - margin-bottom: 0.212cm
+- (List)
+  - family: paragraph
+  - parent-style-name: Text_20_body
+  - class: list
+  - Text properties
+    - font-size-asian: 12pt
+    - font-name-complex: Lohit Hindi1
+- (Caption)
+  - family: paragraph
+  - parent-style-name: Standard
+  - class: extra
+  - Paragraph properties
+    - margin-top: 0.212cm
+    - margin-bottom: 0.212cm
+    - number-lines: false
+    - line-number: 0
+  - Text properties
+    - font-size: 12pt
+    - font-style: italic
+    - font-size-asian: 12pt
+    - font-style-asian: italic
+    - font-name-complex: Lohit Hindi1
+    - font-size-complex: 12pt
+    - font-style-complex: italic
+- (Index)
+  - family: paragraph
+  - parent-style-name: Standard
+  - class: index
+  - Paragraph properties
+    - number-lines: false
+    - line-number: 0
+  - Text properties
+    - font-size-asian: 12pt
+    - font-name-complex: Lohit Hindi1
+- Heading 2 (Heading_20_2)
+  - family: paragraph
+  - parent-style-name: Heading
+  - next-style-name: Text_20_body
+  - default-outline-level: 2
+  - list-style-name: 
+  - class: text
+  - Text properties
+    - font-name: Times New Roman
+    - font-size: 18pt
+    - font-weight: bold
+    - font-name-asian: WenQuanYi Zen Hei
+    - font-size-asian: 18pt
+    - font-weight-asian: bold
+    - font-name-complex: Lohit Hindi
+    - font-size-complex: 18pt
+    - font-weight-complex: bold
+- Heading 3 (Heading_20_3)
+  - family: paragraph
+  - parent-style-name: Heading
+  - next-style-name: Text_20_body
+  - default-outline-level: 3
+  - list-style-name: 
+  - class: text
+  - Text properties
+    - font-name: Times New Roman
+    - font-size: 14pt
+    - font-weight: bold
+    - font-name-asian: WenQuanYi Zen Hei
+    - font-size-asian: 14pt
+    - font-weight-asian: bold
+    - font-name-complex: Lohit Hindi
+    - font-size-complex: 14pt
+    - font-weight-complex: bold
+- Heading 1 (Heading_20_1)
+  - family: paragraph
+  - parent-style-name: Heading
+  - next-style-name: Text_20_body
+  - default-outline-level: 1
+  - class: text
+  - Text properties
+    - font-size: 115%
+    - font-weight: bold
+    - font-size-asian: 115%
+    - font-weight-asian: bold
+    - font-size-complex: 115%
+    - font-weight-complex: bold
+- (Emphasis)
+  - family: text
+  - Text properties
+    - font-style: italic
+    - font-style-asian: italic
+    - font-style-complex: italic

@@ -1,0 +1,71 @@
+// ODT styles
+stylesheet(
+    version="1.0",
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform",
+    xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0",
+    xml:space="preserve"
+) {
+    output(method="text", encoding="utf-8");
+
+    // Display default styles
+    match("style:default-style") {
+        [- Default style (] value-of("@style:family"); [)&#10;]
+
+        // Display attributes others than family
+        apply-templates("@*[local-name() !='family']|node()");
+    }
+
+    // Display style
+    match("style:style") {
+        [- ]
+
+        // A display name is not mandatory
+        if("@style:display-name") {
+            value-of("@style:display-name"); [ ]
+        }
+
+        // Show the machine name between parenthesis
+        [(] value-of("@style:name"); [)&#10;]
+
+        // Display attributes others than display-name or name
+        apply-templates("@*[local-name() !='display-name' and
+                            local-name() !='name']|node()");
+    }
+
+    // Display attributes values for the style tag    
+    match("style:style/@*") {
+        [  - ] value-of("local-name()"); [: ]
+        value-of("."); [&#10;]
+    }
+
+    // Display paragraph properties
+    match("style:paragraph-properties") {
+        [  - Paragraph properties&#10;]
+        apply-templates("@*");
+    }
+
+    // Display text properties
+    match("style:text-properties") {
+        [  - Text properties&#10;]
+        apply-templates("@*");
+    }
+
+    // Display graphic properties
+    match("style:graphic-properties") {
+        [  - Graphic properties&#10;]
+        apply-templates("@*");
+    }
+
+    // Display paragraph/text/graphic attributes values
+    match("style:paragraph-properties/@*|
+           style:text-properties/@*|
+           style:graphic-properties/@*") {
+        [    - ] value-of("local-name()"); [: ]
+        value-of("."); [&#10;]
+    }
+
+    // Parse every tag
+    match("@*|node()") {
+        apply-templates("@*|node()");
+    }
+}

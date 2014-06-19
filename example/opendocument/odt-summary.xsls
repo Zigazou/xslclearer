@@ -1,0 +1,26 @@
+// ODT summary
+stylesheet(
+    version="1.0",
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform",
+    xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0",
+    xml:space="preserve"
+) {
+    output(method="text", encoding="utf-8");
+
+    match("text:h[@text:outline-level = '1']") {
+        [- ] value-of("text()"); [&#10;]
+    }
+    
+    match("text:h[@text:outline-level = '2']") {
+        [  - ] value-of("text()"); [&#10;]
+    }
+
+    match("text:h[@text:outline-level = '3']") {
+        [    - ] value-of("text()"); [&#10;]
+    }
+
+    // Parse every tag
+    match("node()") {
+        apply-templates("node()");
+    }
+}
